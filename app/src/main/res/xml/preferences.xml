@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/appearance_title">
+        <CheckBoxPreference
+            android:key="night_mode"
+            android:title="@string/themes_title"
+            android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="amoled_mode"
+            android:title="@string/amoled_title"
+            android:dependency="night_mode"
+            android:defaultValue="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/notification_title">
+        <CheckBoxPreference
+            android:key="vibrate"
+            android:title="@string/vibrate"
+            android:defaultValue="true"/>
+        <RingtonePreference
+            android:defaultValue=""
+            android:title="@string/ringtone"
+            android:key="ringtone"
+            android:ringtoneType="notification"
+            android:showSilent="true"
+            android:showDefault="true"/>
+        <!--TODO: figure out how to set the defaultValue tag to an item in the string array-->
+        <ListPreference
+            android:key="snooze_interval"
+            android:title="@string/snooze_interval"
+            android:dialogTitle="@string/snooze_interval"
+            android:entries="@array/snooze_interval_array"
+            android:entryValues="@array/snooze_interval_array"
+            android:defaultValue=""/>
+    </PreferenceCategory>
+</PreferenceScreen>

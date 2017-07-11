@@ -1,0 +1,139 @@
+<resources>
+    <string name="app_name">ForLoops</string>
+    <string name="action_settings">Settings</string>
+    <string name="if_empty_text_view">There are no Habits</string>
+
+    <!--Dialog strings-->
+    <string name="name_string">Name</string>
+    <string name="time_spinner_string">Time</string>
+    <string name="dialog_title">Create New Habit</string>
+    <string name="description_string">Description</string>
+    <string name="day_spinner_string">Day</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">Create</string>
+    <!-- TODO create an AM PM format array and have the spinner load which one dependent on preference-->
+    <string-array name="time_spinner_array">
+        <item>08:00</item>
+        <item>12:00</item>
+        <item>16:00</item>
+        <item>20:00</item>
+        <item>Custom</item>
+    </string-array>
+    <string-array name="day_spinner_array">
+        <item>Sundays</item>
+        <item>Mondays</item>
+        <item>Tuesdays</item>
+        <item>Wednesdays</item>
+        <item>Thursdays</item>
+        <item>Fridays</item>
+        <item>Saturdays</item>
+        <item>Every Day</item>
+        <item>Custom</item>
+    </string-array>
+
+    <!--Day Dialog strings-->
+    <string name="day_dialog_title">Days</string>
+    <string name="day_dialog_yes_button">Save</string>
+    <string name="day_dialog_sunday_string">Sundays</string>
+    <string name="day_dialog_monday_string">Mondays</string>
+    <string name="day_dialog_tuesday_string">Tuesdays</string>
+    <string name="day_dialog_wednesday_string">Wednesdays</string>
+    <string name="day_dialog_thursday_string">Thursdays</string>
+    <string name="day_dialog_friday_string">Fridays</string>
+    <string name="day_dialog_saturday_string">Saturdays</string>
+
+
+
+    <!--Settings strings-->
+    <string name="appearance_title">Appearance</string>
+    <string name="themes_title">Night Mode</string>
+    <string name="amoled_title">Black Theme for AMOLED Devices</string>
+    <string name="notification_title">Notifications</string>
+    <string name="snooze_interval">Snooze Interval</string>
+    <string name="vibrate">Vibrate  with ringtone</string>
+    <string name="ringtone">Reminder Sound</string>
+    <string-array name="snooze_interval_array">
+        <item>5 Minutes</item>
+        <item>10 Minutes</item>
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+</resources>
