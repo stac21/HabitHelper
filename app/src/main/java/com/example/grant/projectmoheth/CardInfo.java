@@ -7,7 +7,6 @@ import android.content.res.Resources;
     minute in the AlarmReceiver class
 */
 public class CardInfo {
-    // here until I implement the saving feature
     protected String name;
     protected String description;
     protected int hour;

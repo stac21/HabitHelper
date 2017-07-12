@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static int selectedMinute;
     private static String selectedDay;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,19 +136,26 @@ public class MainActivity extends AppCompatActivity {
                                     selectedDay = "";
 
                                     if (sundayCB.isChecked())
-                                        selectedDay += R.id.sundayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_sunday_string) + " ";
                                     if (mondayCB.isChecked())
-                                        selectedDay += R.id.mondayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_monday_string) + " ";
                                     if (tuesdayCB.isChecked())
-                                        selectedDay += R.id.tuesdayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_tuesday_string) + " ";
                                     if (wednesdayCB.isChecked())
-                                        selectedDay += R.id.wednesdayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_wednesday_string) + " ";
                                     if (thursdayCB.isChecked())
-                                        selectedDay += R.id.thursdayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_thursday_string) + " ";
                                     if (fridayCB.isChecked())
-                                        selectedDay += R.id.fridayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_friday_string) + " ";
                                     if (saturdayCB.isChecked())
-                                        selectedDay += R.id.saturdayCB + " ";
+                                        selectedDay += getApplicationContext().
+                                                getString(R.string.day_dialog_saturday_string) + " ";
                                 }
                             });
 
@@ -164,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
 
                 dialog.setTitle(R.string.dialog_title);
                 dialog.setView(v);
@@ -209,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
     public class CardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         private ArrayList<CardInfo> cardInfoList;
 
-
         public CardAdapter(ArrayList<CardInfo> cardInfoList) {
             if (cardInfoList != null)
                 this.cardInfoList = cardInfoList;
@@ -227,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
             v.nameTextView.setText(ci.name);
             v.timeTextView.setText(ci.hour + ((ci.minute < 10) ? ":0" + ci.minute : ":" + ci.minute));
-            v.dayTextView.setText(selectedDay);
+            v.dayTextView.setText(ci.selectedDay);
         }
 
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -267,10 +273,12 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String json = sp.getString(FILE_NAME, null);
 
-        // TODO check to see if this will break when the list is empty and if so, make a check
-
         Type collectionType = new TypeToken<ArrayList<CardInfo>>(){}.getType();
         ArrayList<CardInfo> cardInfoList = new Gson().fromJson(json, collectionType);
+
+        for (int i = 0; i < cardInfoList.size(); i++) {
+            System.out.println(cardInfoList.get(i).selectedDay + "\n");
+        }
 
         return cardInfoList;
     }
