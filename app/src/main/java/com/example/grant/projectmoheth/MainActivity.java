@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -304,6 +305,11 @@ public class MainActivity extends AppCompatActivity {
             this.startActivity(i);
         } else if (id == R.id.temp_item) {
             new MyNotification(MainActivity.this);
+        } else if (id == R.id.temp_item2) {
+            if (Utils.getCurrentTheme() == Utils.NIGHT_THEME)
+                Utils.changeTheme(MainActivity.this, Utils.LIGHT_THEME);
+            else if (Utils.getCurrentTheme() == Utils.LIGHT_THEME)
+                Utils.changeTheme(MainActivity.this, Utils.TEST);
         }
 
         return super.onOptionsItemSelected(item);
