@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
             if (Utils.getCurrentTheme() == Utils.NIGHT_THEME)
                 Utils.changeTheme(MainActivity.this, Utils.LIGHT_THEME);
             else if (Utils.getCurrentTheme() == Utils.LIGHT_THEME)
-                Utils.changeTheme(MainActivity.this, Utils.TEST);
+                Utils.changeTheme(MainActivity.this, Utils.BLACK_THEME);
         }
 
         return super.onOptionsItemSelected(item);
