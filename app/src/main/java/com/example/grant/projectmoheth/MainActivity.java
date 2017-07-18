@@ -20,11 +20,13 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final EditText nameET = (EditText) v.findViewById(R.id.nameET);
                 final EditText descriptionET = (EditText) v.findViewById(R.id.descriptionET);
+                final Button colorButton = (Button) v.findViewById(R.id.colorButton);
 
                 Spinner timeSpinner = (Spinner) v.findViewById(R.id.timeSpinner);
                 timeSpinner.setAdapter(new ArrayAdapter<String>(view.getContext(),
@@ -171,6 +174,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
 
+                    }
+                });
+
+                colorButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "Button clicked", Toast.LENGTH_SHORT).
+                                show();
                     }
                 });
 
@@ -276,10 +287,6 @@ public class MainActivity extends AppCompatActivity {
 
         Type collectionType = new TypeToken<ArrayList<CardInfo>>(){}.getType();
         ArrayList<CardInfo> cardInfoList = new Gson().fromJson(json, collectionType);
-
-        for (int i = 0; i < cardInfoList.size(); i++) {
-            System.out.println(cardInfoList.get(i).selectedDay + "\n");
-        }
 
         return cardInfoList;
     }
