@@ -12,9 +12,4 @@
         android:orderInCategory="200"
         android:title="Test Notification"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/temp_item2"
-        android:orderInCategory="300"
-        android:title="Change Theme"
-        app:showAsAction="never"/>
 </menu>

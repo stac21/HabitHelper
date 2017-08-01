@@ -34,6 +34,7 @@ public class Settings extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.onActivityCreateSetTheme(this);
         this.setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,6 +72,18 @@ public class Settings extends AppCompatActivity {
                     case "night_mode":
                         CheckBoxPreference nightMode = (CheckBoxPreference) findPreference(key);
 
+                        if (nightMode.isChecked())
+                            Utils.changeTheme(getActivity(), Utils.NIGHT_THEME);
+                        else
+                            Utils.changeTheme(getActivity(), Utils.LIGHT_THEME);
+                        break;
+                    case "amoled_mode":
+                        CheckBoxPreference amoledMode = (CheckBoxPreference) findPreference(key);
+
+                        if (amoledMode.isChecked())
+                            Utils.changeTheme(getActivity(), Utils.BLACK_THEME);
+                        else
+                            Utils.changeTheme(getActivity(), Utils.NIGHT_THEME);
                         break;
                     case "snooze_interval":
                         snoozeInterval.setSummary(snoozeInterval.getValue());

@@ -42,10 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private static int selectedHour;
     private static int selectedMinute;
     private static String selectedDay;
-
+    private boolean launching = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.launching = true;
+
         super.onCreate(savedInstanceState);
         Utils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
@@ -312,13 +314,18 @@ public class MainActivity extends AppCompatActivity {
             this.startActivity(i);
         } else if (id == R.id.temp_item) {
             new MyNotification(MainActivity.this);
-        } else if (id == R.id.temp_item2) {
-            if (Utils.getCurrentTheme() == Utils.NIGHT_THEME)
-                Utils.changeTheme(MainActivity.this, Utils.LIGHT_THEME);
-            else if (Utils.getCurrentTheme() == Utils.LIGHT_THEME)
-                Utils.changeTheme(MainActivity.this, Utils.BLACK_THEME);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (this.launching)
+            this.launching = false;
+        else if (!this.launching)
+            Utils.changeTheme(this, Utils.getCurrentTheme());
     }
 }

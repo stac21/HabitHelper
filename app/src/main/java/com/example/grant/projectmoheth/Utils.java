@@ -16,6 +16,7 @@ public class Utils {
         activity.startActivity(new Intent(activity, activity.getClass()));
     }
 
+    // call in the onCreate method before setContentView
     public static void onActivityCreateSetTheme(Activity activity) {
         switch (currentTheme) {
             case LIGHT_THEME:
