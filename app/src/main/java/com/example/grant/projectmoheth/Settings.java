@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -64,6 +65,8 @@ public class Settings extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragment {
         private SharedPreferences sp;
+        private ListPreference snoozeInterval;
+        private RingtonePreference ringtone;
         private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -73,32 +76,26 @@ public class Settings extends AppCompatActivity {
                         CheckBoxPreference nightMode = (CheckBoxPreference) findPreference(key);
 
                         if (nightMode.isChecked())
-                            Utils.changeTheme(getActivity(), Utils.NIGHT_THEME);
+                            Utils.changeTheme(getActivity(), Theme.NIGHT_THEME);
                         else
-                            Utils.changeTheme(getActivity(), Utils.LIGHT_THEME);
+                            Utils.changeTheme(getActivity(), Theme.LIGHT_THEME);
                         break;
                     case "amoled_mode":
                         CheckBoxPreference amoledMode = (CheckBoxPreference) findPreference(key);
 
                         if (amoledMode.isChecked())
-                            Utils.changeTheme(getActivity(), Utils.BLACK_THEME);
+                            Utils.changeTheme(getActivity(), Theme.BLACK_THEME);
                         else
-                            Utils.changeTheme(getActivity(), Utils.NIGHT_THEME);
+                            Utils.changeTheme(getActivity(), Theme.NIGHT_THEME);
                         break;
-                    case "snooze_interval":
-                        snoozeInterval.setSummary(snoozeInterval.getValue());
-
+                    case "vibrate":
                         break;
                     case "ringtone":
-                        RingtonePreference ringtone = (RingtonePreference) findPreference(key);
-
-                        ringtone.setSummary(ringtone.getRingtoneType());
-
                         break;
                 }
             }
         };
-        private ListPreference snoozeInterval;
+
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -107,8 +104,10 @@ public class Settings extends AppCompatActivity {
             this.addPreferencesFromResource(R.xml.preferences);
 
             this.sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
             this.snoozeInterval = (ListPreference) findPreference("snooze_interval");
             this.snoozeInterval.setSummary(this.snoozeInterval.getValue());
+            this.ringtone = (RingtonePreference) findPreference("ringtone");
         }
 
         @Override

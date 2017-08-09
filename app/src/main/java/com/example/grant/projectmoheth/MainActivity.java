@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -215,7 +216,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
+    public static class CardViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
+        View.OnClickListener {
         protected TextView nameTextView, timeTextView, dayTextView;
 
         public CardViewHolder(View v) {
@@ -224,6 +226,17 @@ public class MainActivity extends AppCompatActivity {
             this.nameTextView = (TextView) v.findViewById(R.id.nameTextView);
             this.timeTextView = (TextView) v.findViewById(R.id.timeTextView);
             this.dayTextView = (TextView) v.findViewById(R.id.dayTextView);
+            v.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // TODO launch the habit's activity
+        }
+        @Override
+        public boolean onLongClick(View v) {
+            // TODO create the actions on the toolbar
+            return false;
         }
     }
 
@@ -326,6 +339,6 @@ public class MainActivity extends AppCompatActivity {
         if (this.launching)
             this.launching = false;
         else if (!this.launching)
-            Utils.changeTheme(this, Utils.getCurrentTheme());
+            Utils.changeTheme(this, Utils.getCurrentTheme(MainActivity.this));
     }
 }
