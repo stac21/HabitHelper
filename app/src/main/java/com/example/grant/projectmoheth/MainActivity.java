@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -180,14 +181,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                colorButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(getApplicationContext(), "Button clicked", Toast.LENGTH_SHORT).
-                                show();
-                    }
-                });
-
                 dialog.setTitle(R.string.dialog_title);
                 dialog.setView(v);
                 dialog.setCancelable(false);
@@ -216,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
+    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
         View.OnClickListener {
         protected TextView nameTextView, timeTextView, dayTextView;
 
@@ -227,15 +220,22 @@ public class MainActivity extends AppCompatActivity {
             this.timeTextView = (TextView) v.findViewById(R.id.timeTextView);
             this.dayTextView = (TextView) v.findViewById(R.id.dayTextView);
             v.setOnLongClickListener(this);
+            v.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            // TODO launch the habit's activity
+            Intent i = new Intent(MainActivity.this, HabitActivity.class);
+
+            i.putExtra("title", this.nameTextView.getText());
+
+            MainActivity.this.startActivity(i);
         }
         @Override
         public boolean onLongClick(View v) {
             // TODO create the actions on the toolbar
+            Snackbar.make(v, "Long Clicked", Snackbar.LENGTH_SHORT).show();
+
             return false;
         }
     }
@@ -311,6 +311,16 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         this.getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem mi = menu.findItem(R.id.extraButton);
+        mi.setVisible(true);
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

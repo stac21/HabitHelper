@@ -57,19 +57,13 @@ public class Utils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         String json = sp.getString(FILE_NAME, null);
 
-        System.out.println("This method was called");
-
         if (json == null) {
             changeTheme(activity, Theme.LIGHT_THEME);
-
-            System.err.println("json == null");
 
             return Theme.LIGHT_THEME;
         } else {
             Type collectionType = new TypeToken<Theme>(){}.getType();
             Theme theme = new Gson().fromJson(json, collectionType);
-
-            System.err.println("json != null");
 
             return theme;
         }
