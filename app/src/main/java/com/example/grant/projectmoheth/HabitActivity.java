@@ -4,10 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CalendarView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 public class HabitActivity extends AppCompatActivity {
 
@@ -17,9 +23,17 @@ public class HabitActivity extends AppCompatActivity {
         Utils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_habit);
 
-        String title = this.getIntent().getStringExtra("title");
+        Intent i = this.getIntent();
+        String json = i.getStringExtra("com.example.grant.projectmoheth.card");
+        Type collectionType = new TypeToken<CardInfo>(){}.getType();
+        CardInfo cardInfo = new Gson().fromJson(json, collectionType);
 
-        setTitle(title);
+        setTitle(cardInfo.name);
+
+        TextView descriptionTV = (TextView) findViewById(R.id.descriptionTV);
+        descriptionTV.setText(cardInfo.description);
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

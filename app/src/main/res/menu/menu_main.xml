@@ -3,19 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.grant.projectmoheth.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/edit_item"
+        android:orderInCategory="0"
+        android:visible="false"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/trash_item"
         android:orderInCategory="1"
+        android:title="@string/action_delete"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="2"
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
-        android:id="@+id/extraButton"
-        android:orderInCategory="1"
-        android:title="Temp"
-        app:showAsAction="always|withText"
-        android:visible="false"/>
-    <item
         android:id="@+id/temp_item"
-        android:orderInCategory="2"
-        android:title="Test Notification"
-        app:showAsAction="never"/>
+        android:orderInCategory="3"
+        android:title="Test Notification" />
 </menu>

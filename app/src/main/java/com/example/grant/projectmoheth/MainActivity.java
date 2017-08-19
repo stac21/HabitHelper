@@ -9,8 +9,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +26,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -45,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static int selectedMinute;
     private static String selectedDay;
     private boolean launching = false;
+    private boolean selected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
-        View.OnClickListener {
+            View.OnClickListener {
         protected TextView nameTextView, timeTextView, dayTextView;
 
         public CardViewHolder(View v) {
@@ -226,15 +224,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(MainActivity.this, HabitActivity.class);
+            CardInfo cardInfo = new CardAdapter(loadList()).getCardInfoList().get(this.getLayoutPosition());
 
-            i.putExtra("title", this.nameTextView.getText());
+            i.putExtra("com.example.grant.projectmoheth.card", new Gson().toJson(cardInfo));
 
             MainActivity.this.startActivity(i);
         }
+
         @Override
         public boolean onLongClick(View v) {
             // TODO create the actions on the toolbar
-            Snackbar.make(v, "Long Clicked", Snackbar.LENGTH_SHORT).show();
+            MainActivity.this.invalidateOptionsMenu();
+
+            selected = true;
 
             return false;
         }
@@ -253,6 +255,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return this.cardInfoList.size();
+        }
+
+        public ArrayList<CardInfo> getCardInfoList() {
+            return cardInfoList;
         }
 
         public void onBindViewHolder(CardViewHolder v, int i) {
@@ -283,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putString(FILE_NAME, json);
 
             editor.apply();
+
+            // TODO add the broadcast to each habit
         }
 
         public void checkList() {
@@ -313,12 +321,30 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem mi = menu.findItem(R.id.extraButton);
-        mi.setVisible(true);
+        if (this.selected) {
+            MenuItem ti = menu.findItem(R.id.trash_item);
+            ti.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            MenuItem ei = menu.findItem(R.id.edit_item);
+            ei.setVisible(true);
+
+            if (Utils.getCurrentTheme(MainActivity.this).equals(Theme.LIGHT_THEME)) {
+                ti.setIcon(R.drawable.ic_delete_black_24dp);
+                ei.setIcon(R.drawable.ic_edit_black_24dp);
+            }
+            else {
+                ti.setIcon(R.drawable.ic_delete_white_24dp);
+                ei.setIcon(R.drawable.ic_edit_white_24dp);
+            }
+
+            this.selected = false;
+        } else {
+            MenuItem ti = menu.findItem(R.id.trash_item);
+            ti.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            MenuItem ei = menu.findItem(R.id.edit_item);
+            ei.setVisible(false);
+        }
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -336,7 +362,10 @@ public class MainActivity extends AppCompatActivity {
 
             this.startActivity(i);
         } else if (id == R.id.temp_item) {
-            new MyNotification(MainActivity.this);
+            Intent i = new Intent(MainActivity.this, AlarmReceiver.class);
+            i.setAction("notification");
+
+            this.sendBroadcast(i);
         }
 
         return super.onOptionsItemSelected(item);

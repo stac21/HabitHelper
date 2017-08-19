@@ -8,10 +8,31 @@
     tools:context="com.example.grant.projectmoheth.HabitActivity"
     tools:showIn="@layout/activity_habit">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/descriptionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/description_string"
+            android:textSize="30sp"/>
+        <TextView
+            android:id="@+id/descriptionTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/descriptionTitle"
+            android:paddingBottom="10dp"
+            android:text="hello"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/daysTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/descriptionTV"
+            android:text="@string/day_dialog_title"
+            android:textSize="30sp"
+            />
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

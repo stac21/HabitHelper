@@ -13,18 +13,24 @@ import android.support.v7.app.NotificationCompat;
 
 public class MyNotification {
     private NotificationCompat.Builder builder;
-    private int uniqueID = 123;
+    private final int UNIQUE_ID = 123;
+    private final int SNOOZE_REQUEST_CODE = 0;
+    private final int CHECK_REQUEST_CODE = 1;
 
     /* TODO: use the titles and some sort of contentText of the card that it supposed
        to go off at the current system time
      */
     public MyNotification(Context context) {
-        Intent snoozeIntent = new Intent(context, MainActivity.class);
-        PendingIntent snoozePendingIntent = PendingIntent.getActivity(context, 0, snoozeIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent checkIntent = new Intent(context, HabitActivity.class);
-        PendingIntent checkPendingIntent = PendingIntent.getActivity(context, 0, checkIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
+        snoozeIntent.setAction("snooze");
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context,
+                this.SNOOZE_REQUEST_CODE, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent checkIntent = new Intent(context, AlarmReceiver.class);
+        checkIntent.setAction("check");
+        PendingIntent checkPendingIntent = PendingIntent.getBroadcast(context,
+                this.CHECK_REQUEST_CODE, checkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         this.builder = new NotificationCompat.Builder(context);
 
         this.builder.setAutoCancel(true);
@@ -56,6 +62,6 @@ public class MyNotification {
         // builds notification and issues it
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(this.uniqueID, this.builder.build());
+        nm.notify(this.UNIQUE_ID, this.builder.build());
     }
 }

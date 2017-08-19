@@ -10,6 +10,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        new MyNotification(context);
+        if (intent.getAction().equals("notification")) {
+            new MyNotification(context);
+        } else if (intent.getAction().equals("check")) {
+            System.out.println("Check");
+        } else if (intent.getAction().equals("snooze")){
+            System.out.println("Snooze");
+        }
     }
 }
