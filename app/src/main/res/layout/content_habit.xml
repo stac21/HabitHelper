@@ -22,15 +22,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/descriptionTitle"
-            android:paddingLeft="10dp"
+            android:paddingLeft="25dp"
             android:paddingBottom="10dp"
             android:textSize="20sp"/>
         <TextView
-            android:id="@+id/daysTitle"
+            android:id="@+id/streak_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/descriptionTV"
-            android:text="@string/day_dialog_title"
+            android:text="@string/streak_string"
+            android:textSize="30sp"/>
+        <TextView
+            android:id="@+id/monthly_progess_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/streak_title"
+            android:text="@string/monthly_progress_string"
             android:textSize="30sp"
             />
         <fragment
@@ -38,7 +45,10 @@
             android:name="com.example.grant.projectmoheth.MonthFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/daysTitle"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/monthly_progess_title"
+            android:paddingLeft="25dp"
+            android:paddingBottom="10dp"
             tools:layout="@layout/month_fragment"/>
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

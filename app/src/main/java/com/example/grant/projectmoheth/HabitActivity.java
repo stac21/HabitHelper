@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CalendarView;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -33,14 +34,6 @@ public class HabitActivity extends AppCompatActivity {
 
         TextView descriptionTV = (TextView) findViewById(R.id.descriptionTV);
         descriptionTV.setText(cardInfo.description);
-
-        TextView monthFragmentHeader = (TextView) findViewById(R.id.month_fragment_header);
-
-        Calendar currentTime = Calendar.getInstance();
-        // TODO make the month into a String that has the current month (and remember that the month starts at 0
-        int month = currentTime.get(Calendar.MONTH);
-        int year = currentTime.get(Calendar.YEAR);
-        monthFragmentHeader.setText(month + "/" + year);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -78,6 +78,35 @@
         <item>-1</item>
     </string-array>
 
+    <string name="streak_string">Streak</string>
+
+    <string name="monthly_progress_string">Monthly Progress</string>
+
+    <!--Month Name Strings-->
+    <string-array name="months_array">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+    <!--Weekday Strings-->
+    <string name="sun_string">Sun</string>
+    <string name="mon_string">Mon</string>
+    <string name="tue_string">Tue</string>
+    <string name="wed_string">Wed</string>
+    <string name="thu_string">Thu</string>
+    <string name="fri_string">Fri</string>
+    <string name="sat_string">Sat</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_settings">Settings</string>
 
