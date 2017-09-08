@@ -29,7 +29,7 @@ public class MonthFragment extends Fragment {
 
         String[] months = getResources().getStringArray(R.array.months_array);
         String monthString = months[month];
-        // TODO make the code return the actual weekDay of the first day of the month
+
         currentTime.set(Calendar.DAY_OF_MONTH, 1);
         int dayOfWeek = currentTime.get(Calendar.DAY_OF_WEEK);
 

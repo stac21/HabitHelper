@@ -2,6 +2,7 @@
     <string name="app_name">ForLoops</string>
     <string name="action_settings">Settings</string>
     <string name="if_empty_text_view">There are no Habits</string>
+    <string name="habit_deleted">Habit Deleted</string>
 
     <!--Notification Strings-->
     <string name="snooze">Snooze</string>
@@ -15,6 +16,7 @@
     <string name="day_spinner_string">Day</string>
     <string name="cancel">Cancel</string>
     <string name="create">Create</string>
+    <string name="time_dialog_title">Select Time</string>
     <!-- TODO create an AM PM format array and have the spinner load which one dependent on preference-->
     <string-array name="time_spinner_array">
         <item>08:00</item>

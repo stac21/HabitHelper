@@ -11,6 +11,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+
 public class MyNotification {
     private NotificationCompat.Builder builder;
     private final int UNIQUE_ID = 123;
@@ -20,14 +25,18 @@ public class MyNotification {
     /* TODO: use the titles and some sort of contentText of the card that it supposed
        to go off at the current system time
      */
-    public MyNotification(Context context) {
+    public MyNotification(Context context, CardInfo cardInfo) {
         Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
-        snoozeIntent.setAction("snooze");
+        snoozeIntent.putExtra("com.example.grant.projectmoheth.snoozeCardInfo",
+                new Gson().toJson(cardInfo));
+        snoozeIntent.setAction("com.example.grant.projectmoheth.snooze");
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context,
                 this.SNOOZE_REQUEST_CODE, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent checkIntent = new Intent(context, AlarmReceiver.class);
-        checkIntent.setAction("check");
+        checkIntent.putExtra("com.example.grant.projectmoheth.checkCardInfo",
+                new Gson().toJson(cardInfo));
+        checkIntent.setAction("com.example.grant.projectmoheth.check");
         PendingIntent checkPendingIntent = PendingIntent.getBroadcast(context,
                 this.CHECK_REQUEST_CODE, checkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -38,11 +47,14 @@ public class MyNotification {
         this.builder.setSmallIcon(R.mipmap.ic_launcher);
         this.builder.setTicker("This is the ticker.");
         this.builder.setWhen(System.currentTimeMillis());
-        this.builder.setContentTitle("Ayy");
-        this.builder.setContentText("Lmao");
+
+        String appName = context.getString(R.string.app_name);
+        this.builder.setContentTitle(appName);
+
+        this.builder.setContentText(cardInfo.name);
         this.builder.setContentIntent(snoozePendingIntent);
         this.builder.setPriority(Notification.PRIORITY_HIGH);
-        // TODO: show the snoozeInterval dialog when the user clicks this action
+
         String snoozeStr = context.getString(R.string.snooze);
         this.builder.addAction(R.drawable.ic_snooze_black_24dp, snoozeStr, snoozePendingIntent);
 

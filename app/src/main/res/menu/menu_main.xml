@@ -11,14 +11,20 @@
         android:id="@+id/trash_item"
         android:orderInCategory="1"
         android:title="@string/action_delete"
-        app:showAsAction="never" />
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/clear_item"
+        android:orderInCategory="2"
+        android:visible="false"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/temp_item"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="Test Notification" />
 </menu>

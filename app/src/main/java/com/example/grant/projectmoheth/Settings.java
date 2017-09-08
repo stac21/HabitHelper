@@ -79,6 +79,9 @@ public class Settings extends AppCompatActivity {
                         break;
                     case "ringtone":
                         break;
+                    case "snooze_interval":
+                        // TODO add a "custom" option to preferences.xml and create a dialog when it is clicked
+                        break;
                 }
             }
         };
