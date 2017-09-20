@@ -24,7 +24,7 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
-        android:id="@+id/temp_item"
+        android:id="@+id/notification_item"
         android:orderInCategory="4"
         android:title="Test Notification" />
 </menu>

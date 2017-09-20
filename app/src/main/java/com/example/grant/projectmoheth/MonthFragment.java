@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class MonthFragment extends Fragment {
-    int year;
+    private int year;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,6 +90,15 @@ public class MonthFragment extends Fragment {
         }
 
         return view;
+    }
+
+    /*
+     draw backgrounds that indicate whether the habit was checked or not checked on a previous day or
+     is planned for a future day on days of the week that match the selectedDay
+     */
+    // TODO implement this
+    public void drawBackgrounds(ArrayList<Integer> selectedDay) {
+
     }
 
     private byte getDaysInMonth(int month) {

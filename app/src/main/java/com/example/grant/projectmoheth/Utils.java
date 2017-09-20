@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class Utils {
     private static Theme currentTheme;
@@ -66,6 +67,27 @@ public class Utils {
             Theme theme = new Gson().fromJson(json, collectionType);
 
             return theme;
+        }
+    }
+
+    /*
+     using insertionSort because high school prevented me from getting any farther in my khanacademy
+     algorithms class, definitely NOT because I think it is good.
+      */
+    public static <T extends Comparable<T>> void insertionSort(ArrayList<T> list) {
+        if (list.size() > 1) {
+            for (int i = 0; i < list.size(); i++) {
+                T val = list.get(i);
+
+                int j = i - 1;
+
+                while (j > -1 && val.compareTo(list.get(j)) < 0) {
+                    list.set(j + 1, list.get(j));
+                    j--;
+                }
+
+                list.set(j + 1, val);
+            }
         }
     }
 }

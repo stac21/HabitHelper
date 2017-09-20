@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -32,11 +33,14 @@ public class HabitActivity extends AppCompatActivity {
         TextView descriptionTV = (TextView) findViewById(R.id.descriptionTV);
         descriptionTV.setText(cardInfo.description);
 
+        MonthFragment monthFragment = (MonthFragment) getFragmentManager().
+                findFragmentById(R.id.month_fragment);
+        monthFragment.drawBackgrounds(cardInfo.selectedDay);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolBarLayout.setTitle(getTitle());
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

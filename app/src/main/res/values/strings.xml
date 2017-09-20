@@ -7,6 +7,7 @@
     <!--Notification Strings-->
     <string name="snooze">Snooze</string>
     <string name="check">Done</string>
+    <string name="test">Test</string>
 
     <!--Dialog strings-->
     <string name="name_string">Name</string>
@@ -16,6 +17,7 @@
     <string name="day_spinner_string">Day</string>
     <string name="cancel">Cancel</string>
     <string name="create">Create</string>
+    <string name="empty_fields">You must have a name and description to create the habit</string>
     <string name="time_dialog_title">Select Time</string>
     <!-- TODO create an AM PM format array and have the spinner load which one dependent on preference-->
     <string-array name="time_spinner_array">
@@ -47,6 +49,8 @@
     <string name="day_dialog_thursday_string">Thursdays</string>
     <string name="day_dialog_friday_string">Fridays</string>
     <string name="day_dialog_saturday_string">Saturdays</string>
+    <string name="every_day">Every Day</string>
+    <string name="custom">Custom</string>
 
     <!--Settings strings-->
     <string name="appearance_title">Appearance</string>

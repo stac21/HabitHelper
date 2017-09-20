@@ -17,31 +17,31 @@
         android:columnOrderPreserved="true"
         android:rowOrderPreserved="true">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/sun_string" />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/mon_string"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/tue_string"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/wed_string"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/thu_string"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/fri_string"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:text="@string/sat_string"/>
     </GridLayout>

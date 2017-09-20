@@ -12,9 +12,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
+import java.util.Calendar;
 
 public class MyNotification {
     private NotificationCompat.Builder builder;
@@ -45,13 +44,16 @@ public class MyNotification {
         this.builder.setAutoCancel(true);
         // TODO: set the icon to my custom notification icon
         this.builder.setSmallIcon(R.mipmap.ic_launcher);
-        this.builder.setTicker("This is the ticker.");
-        this.builder.setWhen(System.currentTimeMillis());
+        this.builder.setTicker(cardInfo.name + ": " + cardInfo.description);
 
-        String appName = context.getString(R.string.app_name);
-        this.builder.setContentTitle(appName);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, cardInfo.hour);
+        calendar.set(Calendar.MINUTE, cardInfo.minute);
+        this.builder.setWhen(calendar.getTimeInMillis());
 
-        this.builder.setContentText(cardInfo.name);
+        this.builder.setContentTitle(cardInfo.name);
+
+        this.builder.setContentText(cardInfo.description);
         this.builder.setContentIntent(snoozePendingIntent);
         this.builder.setPriority(Notification.PRIORITY_HIGH);
 
@@ -64,6 +66,9 @@ public class MyNotification {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String alarms = sp.getString("ringtone", "default ringtone");
         this.builder.setSound(Uri.parse(alarms));
+
+        // sets the notification LED to the device's default
+        this.builder.setDefaults(NotificationCompat.DEFAULT_LIGHTS);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
