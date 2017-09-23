@@ -1,6 +1,7 @@
 package com.example.grant.projectmoheth;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,7 +15,8 @@ public class CardInfo {
     protected String description;
     protected int hour;
     protected int minute;
-    protected int dateCreated;
+    protected int dateCreatedOrEdited;
+    private boolean checked;
     /*
     Meaning of numbers is as follows
     Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6, Everyday: 7
@@ -29,8 +31,10 @@ public class CardInfo {
         this.description = description;
         this.hour = hour;
         this.minute = minute;
-        this.dateCreated = dateCreated;
+        this.dateCreatedOrEdited = dateCreated;
+        this.checked = false;
         this.selectedDay = selectedDay;
+
     }
 
     public String getTruncatedName() {
@@ -78,11 +82,44 @@ public class CardInfo {
                 }
             }
 
-                // removes the last comma and space
-                if (this.selectedDay.get(0) != 7)
-                    str = str.substring(0, str.length() - 2);
+            // removes the last comma and space
+            if (this.selectedDay.get(0) != 7)
+                str = str.substring(0, str.length() - 2);
         }
 
         return str;
+    }
+
+    public boolean equals(CardInfo cardInfo) {
+        if (this.selectedDay.size() == cardInfo.selectedDay.size()) {
+            for (int i = 0; i < this.selectedDay.size(); i++) {
+                if (this.selectedDay.get(i) != cardInfo.selectedDay.get(i))
+                    return false;
+            }
+        } else
+            return false;
+
+        return (this.name.equals(cardInfo.name) && this.description.equals(cardInfo.description) &&
+            this.hour == cardInfo.hour && this.minute == cardInfo.minute &&
+            this.dateCreatedOrEdited == cardInfo.dateCreatedOrEdited);
+    }
+
+    public void check(Context context) {
+        if (this.checked)
+            Toast.makeText(context, context.getString(R.string.already_checked), Toast.LENGTH_SHORT).
+                    show();
+        else {
+            this.checked = true;
+            Toast.makeText(context, context.getString(R.string.checked), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void unCheck() {
+        this.checked = false;
+    }
+
+    public boolean getChecked() {
+        return this.checked;
     }
 }

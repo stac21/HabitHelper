@@ -26,7 +26,7 @@ public class HabitActivity extends AppCompatActivity {
         Intent i = this.getIntent();
         String json = i.getStringExtra("com.example.grant.projectmoheth.card");
         Type collectionType = new TypeToken<CardInfo>(){}.getType();
-        CardInfo cardInfo = new Gson().fromJson(json, collectionType);
+        final CardInfo cardInfo = new Gson().fromJson(json, collectionType);
 
         setTitle(cardInfo.name);
 
@@ -47,7 +47,7 @@ public class HabitActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO Check off habit when user clicks this button
-                MainActivity.cardAdapter.getCard(MainActivity.position);
+                MainActivity.cardAdapter.getCard(MainActivity.position).check(HabitActivity.this);
             }
         });
     }

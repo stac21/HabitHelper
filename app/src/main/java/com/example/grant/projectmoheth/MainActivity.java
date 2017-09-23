@@ -44,7 +44,6 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public static CardAdapter cardAdapter;
-    public static AlarmManager alarmManager;
     private RecyclerView recyclerView;
     private Resources r;
     public static final String CARD_FILE = "com.example.grant.projectmoheth.FileName";
@@ -173,33 +172,45 @@ public class MainActivity extends AppCompatActivity {
                             dayDialog.setPositiveButton(R.string.day_dialog_yes_button, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (sundayCB.isChecked())
-                                        selectedDay.add(0);
-                                    if (mondayCB.isChecked())
-                                        selectedDay.add(1);
-                                    if (tuesdayCB.isChecked())
-                                        selectedDay.add(2);
-                                    if (wednesdayCB.isChecked())
-                                        selectedDay.add(3);
-                                    if (thursdayCB.isChecked())
-                                        selectedDay.add(4);
-                                    if (fridayCB.isChecked())
-                                        selectedDay.add(5);
-                                    if (saturdayCB.isChecked())
-                                        selectedDay.add(6);
                                 }
                             });
 
-                            String str = new String();
-                            for (int i = 0; i < selectedDay.size(); i++) {
-                                str += selectedDay.get(i) + "";
-                            }
+                            final AlertDialog alertDialog = dayDialog.create();
+                            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                @Override
+                                public void onShow(DialogInterface dialogInterface) {
+                                    Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                    button.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            if (sundayCB.isChecked())
+                                                selectedDay.add(0);
+                                            if (mondayCB.isChecked())
+                                                selectedDay.add(1);
+                                            if (tuesdayCB.isChecked())
+                                                selectedDay.add(2);
+                                            if (wednesdayCB.isChecked())
+                                                selectedDay.add(3);
+                                            if (thursdayCB.isChecked())
+                                                selectedDay.add(4);
+                                            if (fridayCB.isChecked())
+                                                selectedDay.add(5);
+                                            if (saturdayCB.isChecked())
+                                                selectedDay.add(6);
+                                            if (selectedDay.size() == 0) {
+                                                Toast.makeText(MainActivity.this,
+                                                        MainActivity.this.getString(
+                                                                R.string.day_dialog_empty),
+                                                        Toast.LENGTH_SHORT).show();
+                                            } else
+                                                alertDialog.dismiss();
 
-                            System.out.println(str);
+                                        }
+                                    });
+                                }
+                            });
 
-                            dayDialog.create();
-
-                            dayDialog.show();
+                            alertDialog.show();
                         } else {
                             // wipes the current selectedDay to avoid duplicates
                             selectedDay = new ArrayList<>();
@@ -362,29 +373,12 @@ public class MainActivity extends AppCompatActivity {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            if (alarmManager == null) {
-                alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            }
-
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pi);
         }
 
         public void removeCard() {
-            // TODO make sure that this actually removes the alarm from the habit
-            /*
-            Intent i = new Intent(MainActivity.this, AlarmReceiver.class);
-            i.putExtra("com.example.grant.projectmoheth.alarmCardInfo",
-                    new Gson().toJson(this.cardInfoList.get(position)));
-            i.setAction("com.example.grant.projectmoheth.notification");
-
-            if (alarmManager == null)
-                alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-            alarmManager.cancel(PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, i,
-                    PendingIntent.FLAG_UPDATE_CURRENT));
-                    */
-
             this.cardInfoList.remove(position);
 
             cardAdapter.checkList();
@@ -401,11 +395,15 @@ public class MainActivity extends AppCompatActivity {
 
         public void editCard(String name, String description, int hour, int minute,
                              ArrayList<Integer> selectedDay) {
+            Calendar calendar = Calendar.getInstance();
             this.cardInfoList.get(position).name = name;
             this.cardInfoList.get(position).description = description;
             this.cardInfoList.get(position).hour = hour;
             this.cardInfoList.get(position).minute = minute;
+            this.cardInfoList.get(position).unCheck();
             this.cardInfoList.get(position).selectedDay = selectedDay;
+            this.cardInfoList.get(position).dateCreatedOrEdited = calendar.get(Calendar.DAY_OF_YEAR)
+                + calendar.get(Calendar.YEAR);
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             SharedPreferences.Editor editor = sp.edit();
@@ -416,11 +414,29 @@ public class MainActivity extends AppCompatActivity {
 
             editor.apply();
 
-            // TODO find a way to refresh the activity without having the activity start animation
-            MainActivity.this.finish();
-            startActivity(new Intent(MainActivity.this, MainActivity.class));
+            Intent i = new Intent(MainActivity.this, AlarmReceiver.class);
+            i.putExtra("com.example.grant.projectmoheth.alarmCardInfo", new Gson().toJson(
+                    this.cardInfoList.get(position)));
+            i.setAction("com.example.grant.projectmoheth.notification");
+            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, i,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
-            // TODO edit the card's PendingIntent to set off an alarm at the changed time
+
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pi);
+
+            // TODO find a way to refresh the activity without having the activity start animation
+            //MainActivity.this.finish();
+            //startActivity(new Intent(MainActivity.this, MainActivity.class));
+            finish();
+            overridePendingTransition( 0, 0);
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
+            overridePendingTransition( 0, 0);
         }
 
         public void moveItem(int oldPos, int newPos) {
@@ -572,9 +588,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            String selection = (String) timeSpinner.getSelectedItem();
-            Toast.makeText(MainActivity.this, selection, Toast.LENGTH_LONG).show();
-
             selectedDay = new ArrayList<>();
 
             Spinner daySpinner = (Spinner) v.findViewById(R.id.daySpinner);
@@ -601,26 +614,44 @@ public class MainActivity extends AppCompatActivity {
                         dayDialog.setPositiveButton(R.string.day_dialog_yes_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (sundayCB.isChecked())
-                                    selectedDay.add(0);
-                                if (mondayCB.isChecked())
-                                    selectedDay.add(1);
-                                if (tuesdayCB.isChecked())
-                                    selectedDay.add(2);
-                                if (wednesdayCB.isChecked())
-                                    selectedDay.add(3);
-                                if (thursdayCB.isChecked())
-                                    selectedDay.add(4);
-                                if (fridayCB.isChecked())
-                                    selectedDay.add(5);
-                                if (saturdayCB.isChecked())
-                                    selectedDay.add(6);
                             }
                         });
 
-                        dayDialog.create();
+                        final AlertDialog alertDialog = dayDialog.create();
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialogInterface) {
+                                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                button.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (sundayCB.isChecked())
+                                            selectedDay.add(0);
+                                        if (mondayCB.isChecked())
+                                            selectedDay.add(1);
+                                        if (tuesdayCB.isChecked())
+                                            selectedDay.add(2);
+                                        if (wednesdayCB.isChecked())
+                                            selectedDay.add(3);
+                                        if (thursdayCB.isChecked())
+                                            selectedDay.add(4);
+                                        if (fridayCB.isChecked())
+                                            selectedDay.add(5);
+                                        if (saturdayCB.isChecked())
+                                            selectedDay.add(6);
+                                        if (selectedDay.size() == 0) {
+                                            Toast.makeText(MainActivity.this,
+                                                    MainActivity.this.getString(
+                                                            R.string.day_dialog_empty),
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else
+                                            alertDialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
 
-                        dayDialog.show();
+                        alertDialog.show();
                     } else {
                         selectedDay.add(position);
                     }
@@ -639,9 +670,6 @@ public class MainActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    cardAdapter.editCard(nameET.getText().toString(),
-                            descriptionET.getText().toString(), selectedHour, selectedMinute,
-                            selectedDay);
                 }
             });
             dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

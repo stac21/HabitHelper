@@ -1,5 +1,6 @@
 package com.example.grant.projectmoheth;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,14 +18,22 @@ import java.util.Calendar;
 
 public class MyNotification {
     private NotificationCompat.Builder builder;
-    private final int UNIQUE_ID = 123;
+    private static int UNIQUE_ID = 123;
     private final int SNOOZE_REQUEST_CODE = 0;
     private final int CHECK_REQUEST_CODE = 1;
+    private final int HABIT_REQUEST_CODE = 3;
 
     /* TODO: use the titles and some sort of contentText of the card that it supposed
        to go off at the current system time
      */
     public MyNotification(Context context, CardInfo cardInfo) {
+        Intent habitIntent = new Intent(context, AlarmReceiver.class);
+        String json = new Gson().toJson(cardInfo);
+        habitIntent.putExtra("com.example.grant.projectmoheth.card", json);
+        habitIntent.setAction("com.example.grant.projectmoheth.notification_clicked");
+        PendingIntent habitPendingIntent = PendingIntent.getBroadcast(context,
+                this.HABIT_REQUEST_CODE, habitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
         snoozeIntent.putExtra("com.example.grant.projectmoheth.snoozeCardInfo",
                 new Gson().toJson(cardInfo));
@@ -54,7 +63,7 @@ public class MyNotification {
         this.builder.setContentTitle(cardInfo.name);
 
         this.builder.setContentText(cardInfo.description);
-        this.builder.setContentIntent(snoozePendingIntent);
+        this.builder.setContentIntent(habitPendingIntent);
         this.builder.setPriority(Notification.PRIORITY_HIGH);
 
         String snoozeStr = context.getString(R.string.snooze);
@@ -69,16 +78,18 @@ public class MyNotification {
 
         // sets the notification LED to the device's default
         this.builder.setDefaults(NotificationCompat.DEFAULT_LIGHTS);
+        this.builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
         // may need to change this back to AlarmReceiver.class
         stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(checkIntent);
+        stackBuilder.addNextIntent(habitIntent);
 
         // builds notification and issues it
-        NotificationManager nm = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(this.UNIQUE_ID, this.builder.build());
+         NotificationManager nm = (NotificationManager)
+                 context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(UNIQUE_ID, this.builder.build());
+        UNIQUE_ID++;
     }
 }

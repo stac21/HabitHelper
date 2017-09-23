@@ -24,19 +24,21 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO register the PendingIntents on device wakeup (intent.getAction().equals(ACTION_BOOT_COMPLETED) or ACTION_LOCKED_BOOT_COMPLETED
-        if (intent.getAction() == Intent.ACTION_BOOT_COMPLETED) {
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             String json = sp.getString(MainActivity.CARD_FILE, null);
-
+            System.out.println("boot completed");
+            Toast.makeText(context, "Hello", Toast.LENGTH_LONG).show();
             if (json != null) {
+                System.out.println("json was not null");
                 Type collectionType = new TypeToken<ArrayList<CardInfo>>(){}.getType();
-                ArrayList<CardInfo> list = new Gson().fromJson(MainActivity.CARD_FILE,
+                ArrayList<CardInfo> list = new Gson().fromJson(json,
                         collectionType);
 
                 Calendar calendar = Calendar.getInstance();
 
                 if (list.size() != 0) {
-                    MainActivity.alarmManager = (AlarmManager)
+                    AlarmManager alarmManager = (AlarmManager)
                             context.getSystemService(Context.ALARM_SERVICE);
 
                     for (byte i = 0; i < list.size(); i++) {
@@ -56,36 +58,48 @@ public class AlarmReceiver extends BroadcastReceiver {
                         calendar.set(Calendar.MINUTE, cardInfo.minute);
 
 
-                        MainActivity.alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                                 calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
                     }
                 }
             }
         } else if (intent.getAction().equals("com.example.grant.projectmoheth.notification")) {
+            System.out.println("Notification's broadcast was recieved");
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            String json = sp.getString(MainActivity.CARD_FILE, null);
+
             Type cardInfoCollectionType = new TypeToken<CardInfo>(){}.getType();
             CardInfo cardInfo = new Gson().fromJson(
                     intent.getStringExtra("com.example.grant.projectmoheth.alarmCardInfo"),
                     cardInfoCollectionType);
 
             Type cardInfoListCollectionType = new TypeToken<ArrayList<CardInfo>>(){}.getType();
-            ArrayList<CardInfo> cardInfoList = new Gson().fromJson(MainActivity.CARD_FILE,
+            ArrayList<CardInfo> cardInfoList = new Gson().fromJson(json,
                     cardInfoListCollectionType);
 
             Calendar calendar = Calendar.getInstance();
 
-            if (cardInfo.dateCreated != calendar.get(Calendar.DAY_OF_YEAR) +
+            if (cardInfo.dateCreatedOrEdited != calendar.get(Calendar.DAY_OF_YEAR) +
                     calendar.get(Calendar.YEAR) || calendar.get(Calendar.HOUR_OF_DAY) >=
                     cardInfo.hour && calendar.get(Calendar.MINUTE) >= cardInfo.minute) {
+                System.out.println("Got past this condition");
                 for (int i = 0; i < cardInfoList.size(); i++) {
                     if (cardInfoList.get(i).equals(cardInfo)) {
                         System.out.println("This code was reached");
+                        cardInfo.unCheck();
                         new MyNotification(context, cardInfo);
                         break;
                     }
                 }
             }
-        } else if (intent.getAction().equals("com.example.grant.projectmoheth.check")) {
+        } else if (intent.getAction().equals("com.example.grant.projectmoheth.notification_clicked")) {
+            Intent i = new Intent(context, HabitActivity.class);
+            i.putExtra("com.example.grant.projectmoheth.card",
+                    intent.getStringExtra("com.example.grant.projectmoheth.card"));
 
+            context.startActivity(i);
+        } else if (intent.getAction().equals("com.example.grant.projectmoheth.check")) {
             Type collectionType = new TypeToken<CardInfo>(){}.getType();
             CardInfo cardInfo = new Gson().fromJson(
                     intent.getStringExtra("com.example.grant.projectmoheth.checkCardInfo"),
