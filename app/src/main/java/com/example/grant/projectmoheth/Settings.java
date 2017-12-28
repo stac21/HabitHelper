@@ -53,7 +53,6 @@ public class Settings extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragment {
         private SharedPreferences sp;
         private ListPreference snoozeInterval;
-        private RingtonePreference ringtone;
         private SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -75,13 +74,9 @@ public class Settings extends AppCompatActivity {
                         else
                             Utils.changeTheme(getActivity(), Theme.NIGHT_THEME);
                         break;
-                    case "snooze_interval":
-                        // TODO add a "custom" option to preferences.xml and create a dialog when it is clicked
-                        break;
                 }
             }
         };
-
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +88,6 @@ public class Settings extends AppCompatActivity {
 
             this.snoozeInterval = (ListPreference) findPreference("snooze_interval");
             this.snoozeInterval.setSummary(this.snoozeInterval.getValue());
-            this.ringtone = (RingtonePreference) findPreference("ringtone");
         }
 
         @Override
@@ -108,6 +102,27 @@ public class Settings extends AppCompatActivity {
             super.onResume();
 
             this.sp.registerOnSharedPreferenceChangeListener(this.listener);
+        }
+
+        public int getSnoozeLengthMillis() {
+            this.snoozeInterval = (ListPreference) findPreference("snooze_interval");
+            String[] entries = getResources().getStringArray(R.array.snooze_interval_array);
+            String value = this. snoozeInterval.getValue();
+            // 5 minutes
+            if (value.equals(entries[0]))
+                return 300000;
+            // 10 minutes
+            else if (value.equals(entries[1]))
+                return 600000;
+            // 15 minutes
+            else if (value.equals(entries[2]))
+                return 900000;
+            // 30 minutes
+            else if (value.equals(entries[3]))
+                return 1800000;
+            // 1 hour
+            else
+                return 3600000;
         }
     }
 }

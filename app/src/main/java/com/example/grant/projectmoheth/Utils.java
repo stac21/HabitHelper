@@ -71,8 +71,8 @@ public class Utils {
     }
 
     /*
-     using insertionSort because high school prevented me from getting any farther in my khanacademy
-     algorithms class, definitely NOT because I think it is good.
+     using insertionSort because high school prevented me from getting much farther in my study of
+     sorting algorithms, definitely NOT because I think it is good.
       */
     public static <T extends Comparable<T>> void insertionSort(ArrayList<T> list) {
         if (list.size() > 1) {
@@ -88,6 +88,31 @@ public class Utils {
 
                 list.set(j + 1, val);
             }
+        }
+    }
+
+    public static <T extends Comparable<T>> int binarySearch(ArrayList<T> list, T val) {
+        int max = list.size() - 1;
+        int min = 0;
+
+        // if the size is 0
+        if (max < min) {
+            return -1;
+        } else if (list.size() == 1) {
+            return 0;
+        }
+
+        int i = (max + min) / 2;
+
+        while (true) {
+            if (list.get(i) == val) {
+                return i;
+            } else if (list.get(i).compareTo(val) < 0) {
+                min = i;
+            } else if (list.get(i).compareTo(val) > 0) {
+                max = i;
+            }
+            i = (min + max) / 2;
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.example.grant.projectmoheth;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.MainThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -33,9 +35,13 @@ public class HabitActivity extends AppCompatActivity {
         TextView descriptionTV = (TextView) findViewById(R.id.descriptionTV);
         descriptionTV.setText(cardInfo.description);
 
-        MonthFragment monthFragment = (MonthFragment) getFragmentManager().
+        final MonthFragment monthFragment = (MonthFragment) getFragmentManager().
                 findFragmentById(R.id.month_fragment);
-        monthFragment.drawBackgrounds(cardInfo.selectedDay);
+        monthFragment.makeCalendar(cardInfo);
+
+        final ConsistencyFragment consistencyFragment = (ConsistencyFragment) getFragmentManager().
+                findFragmentById(R.id.consistency_fragment);
+        consistencyFragment.makeProgressBar(cardInfo);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,8 +52,26 @@ public class HabitActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO Check off habit when user clicks this button
-                MainActivity.cardAdapter.getCard(MainActivity.position).check(HabitActivity.this);
+                // refresh month and consistency fragments if the habit was not checked previously
+                if (!MainActivity.cardAdapter.getCard(MainActivity.position).getChecked()) {
+                    MainActivity.cardAdapter.getCard(MainActivity.position).setChecked(
+                            HabitActivity.this, true);
+
+                    monthFragment.refreshCalendar(cardInfo);
+                    consistencyFragment.refreshProgressBar(cardInfo);
+                } else {
+                    MainActivity.cardAdapter.getCard(MainActivity.position).setChecked(
+                            HabitActivity.this, true);
+                }
+
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(HabitActivity.this);
+                SharedPreferences.Editor editor = sp.edit();
+
+                String json = new Gson().toJson(MainActivity.cardAdapter.getCardInfoList());
+
+                editor.putString(MainActivity.CARD_FILE, json);
+
+                editor.apply();
             }
         });
     }

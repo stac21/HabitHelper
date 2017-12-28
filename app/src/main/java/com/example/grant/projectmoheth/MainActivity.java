@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static CardAdapter cardAdapter;
     private RecyclerView recyclerView;
     private Resources r;
-    public static final String CARD_FILE = "com.example.grant.projectmoheth.FileName";
+    public static final String CARD_FILE = "com.example.grant.projectmoheth.hello";
     public static final int ALARM_REQUEST_CODE = 2;
     private static int selectedHour;
     private static int selectedMinute;
@@ -330,11 +330,16 @@ public class MainActivity extends AppCompatActivity {
             return this.cardInfoList.get(position);
         }
 
+        public ArrayList<CardInfo> getCardInfoList() {
+            return this.cardInfoList;
+        }
+
         public void onBindViewHolder(CardViewHolder v, int i) {
             CardInfo ci = this.cardInfoList.get(i);
 
             v.nameTextView.setText(ci.getTruncatedName());
-            v.timeTextView.setText(ci.hour + ((ci.minute < 10) ? ":0" + ci.minute : ":" + ci.minute));
+            v.timeTextView.setText(ci.hour + ((ci.minute < 10) ? ":0" + ci.minute : ":" +
+                    ci.minute));
             v.dayTextView.setText(ci.getSelectedDayName(MainActivity.this));
         }
 
@@ -394,14 +399,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void editCard(String name, String description, int hour, int minute,
-                             ArrayList<Integer> selectedDay) {
+                             ArrayList<Integer> selectedDays) {
             Calendar calendar = Calendar.getInstance();
+
             this.cardInfoList.get(position).name = name;
             this.cardInfoList.get(position).description = description;
             this.cardInfoList.get(position).hour = hour;
             this.cardInfoList.get(position).minute = minute;
-            this.cardInfoList.get(position).unCheck();
-            this.cardInfoList.get(position).selectedDay = selectedDay;
+            this.cardInfoList.get(position).setChecked(MainActivity.this, false);
+            this.cardInfoList.get(position).selectedDays = selectedDays;
             this.cardInfoList.get(position).dateCreatedOrEdited = calendar.get(Calendar.DAY_OF_YEAR)
                 + calendar.get(Calendar.YEAR);
 
@@ -421,7 +427,6 @@ public class MainActivity extends AppCompatActivity {
             PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, i,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
@@ -430,13 +435,10 @@ public class MainActivity extends AppCompatActivity {
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pi);
 
-            // TODO find a way to refresh the activity without having the activity start animation
-            //MainActivity.this.finish();
-            //startActivity(new Intent(MainActivity.this, MainActivity.class));
             finish();
-            overridePendingTransition( 0, 0);
+            overridePendingTransition(0, 0);
             startActivity(new Intent(MainActivity.this, MainActivity.class));
-            overridePendingTransition( 0, 0);
+            overridePendingTransition(0, 0);
         }
 
         public void moveItem(int oldPos, int newPos) {
@@ -704,7 +706,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            dialog.show();
+            alertDialog.show();
 
             this.selected = false;
             MainActivity.this.invalidateOptionsMenu();
