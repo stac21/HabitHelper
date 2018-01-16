@@ -90,6 +90,7 @@
     <string name="consistency_title">Consistency</string>
     <string name="streak_title">Streak:</string>
     <string name="grade_title">Grade:</string>
+    <string name="not_available">N/A</string>
 
     <string name="monthly_progress_string">Monthly Progress</string>
 

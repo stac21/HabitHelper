@@ -4,7 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -23,7 +28,7 @@ public class Utils {
         activity.startActivity(new Intent(activity, activity.getClass()));
     }
 
-    // call in the onCreate method before setContentView
+    // call in the onCreate method before setContentView is called
     public static void onActivityCreateSetTheme(Activity activity) {
         currentTheme = getCurrentTheme(activity);
 
@@ -39,6 +44,28 @@ public class Utils {
                 break;
             case TEST:
                 activity.setTheme(R.style.AppTheme);
+        }
+    }
+
+    // call in the onCreate method before setSupportActionBar is called
+    public static void setToolbarTheme(Activity activity, Toolbar toolbar) {
+        switch (Utils.getCurrentTheme(activity)) {
+            case LIGHT_THEME:
+                toolbar.setPopupTheme(R.style.LightTheme);
+                toolbar.setTitleTextColor(Color.BLACK);
+
+                Drawable backArrow =
+                        activity.getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                backArrow.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                break;
+            case NIGHT_THEME:
+                toolbar.setPopupTheme(R.style.NightTheme);
+                // titleTextColor does not need to be set to white
+                break;
+            case BLACK_THEME:
+                toolbar.setPopupTheme(R.style.NightTheme);
+                // titleTextColor does not need to be set to white
+                break;
         }
     }
 
@@ -98,21 +125,24 @@ public class Utils {
         // if the size is 0
         if (max < min) {
             return -1;
-        } else if (list.size() == 1) {
-            return 0;
+        } else if (list.get(min).compareTo(val) > 0 || list.get(max).compareTo(val) < 0) {
+            return -1;
         }
 
         int i = (max + min) / 2;
 
-        while (true) {
+        while (min <= max) {
             if (list.get(i) == val) {
                 return i;
             } else if (list.get(i).compareTo(val) < 0) {
-                min = i;
+                min = i + 1;
             } else if (list.get(i).compareTo(val) > 0) {
-                max = i;
+                max = i - 1;
             }
+
             i = (min + max) / 2;
         }
+
+        return -1;
     }
 }

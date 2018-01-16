@@ -24,15 +24,6 @@
         android:layout_marginLeft="10dp"
         android:text="@string/grade_title"
         android:textSize="20sp"/>
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:progressDrawable="@drawable/my_progress_bar_horizontal"
-        android:layout_width="100dp"
-        android:layout_height="20dp"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/grade_title"
-        android:layout_toEndOf="@id/grade_title"/>
     <TextView
         android:id="@+id/grade"
         android:layout_width="wrap_content"

@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.MainThread;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -41,11 +39,12 @@ public class HabitActivity extends AppCompatActivity {
 
         final ConsistencyFragment consistencyFragment = (ConsistencyFragment) getFragmentManager().
                 findFragmentById(R.id.consistency_fragment);
-        consistencyFragment.makeProgressBar(cardInfo);
+        consistencyFragment.makeFragment(cardInfo);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout)
+                findViewById(R.id.toolbar_layout);
         toolBarLayout.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -58,13 +57,14 @@ public class HabitActivity extends AppCompatActivity {
                             HabitActivity.this, true);
 
                     monthFragment.refreshCalendar(cardInfo);
-                    consistencyFragment.refreshProgressBar(cardInfo);
+                    consistencyFragment.refresh(cardInfo);
                 } else {
                     MainActivity.cardAdapter.getCard(MainActivity.position).setChecked(
                             HabitActivity.this, true);
                 }
 
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(HabitActivity.this);
+                SharedPreferences sp =
+                        PreferenceManager.getDefaultSharedPreferences(HabitActivity.this);
                 SharedPreferences.Editor editor = sp.edit();
 
                 String json = new Gson().toJson(MainActivity.cardAdapter.getCardInfoList());

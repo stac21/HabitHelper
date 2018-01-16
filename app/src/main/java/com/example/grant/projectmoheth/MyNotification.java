@@ -18,17 +18,11 @@ import java.util.Calendar;
 
 public class MyNotification {
     private NotificationCompat.Builder builder;
-    public static ArrayList<Integer> idList = new ArrayList<>();
-    private static int UNIQUE_ID = 123;
     public static final int SNOOZE_REQUEST_CODE = 0;
     public static final int CHECK_REQUEST_CODE = 1;
     public static final int HABIT_REQUEST_CODE = 3;
 
     public MyNotification(Context context, CardInfo cardInfo) {
-        idList.add(UNIQUE_ID);
-
-        final int index = idList.size() - 1;
-
         Intent habitIntent = new Intent(context, AlarmReceiver.class);
         String json = new Gson().toJson(cardInfo);
         habitIntent.putExtra("com.example.grant.projectmoheth.card", json);
@@ -46,7 +40,6 @@ public class MyNotification {
         Intent checkIntent = new Intent(context, AlarmReceiver.class);
         checkIntent.putExtra("com.example.grant.projectmoheth.checkCardInfo",
                 new Gson().toJson(cardInfo));
-        checkIntent.putExtra("com.example.grant.projectmoheth.index", index);
         checkIntent.setAction("com.example.grant.projectmoheth.check");
         PendingIntent checkPendingIntent = PendingIntent.getBroadcast(context,
                 CHECK_REQUEST_CODE, checkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -92,8 +85,6 @@ public class MyNotification {
         // builds notification and issues it
          NotificationManager nm = (NotificationManager)
                  context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(UNIQUE_ID, this.builder.build());
-
-        UNIQUE_ID++;
+        nm.notify(cardInfo.uniqueID, this.builder.build());
     }
 }

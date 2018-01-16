@@ -11,9 +11,8 @@ import android.widget.TextView;
 
 public class ConsistencyFragment extends Fragment {
     private View view;
-    private double totalCompleted;
+    private int totalCompleted;
     private TextView streak, grade;
-    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,30 +21,30 @@ public class ConsistencyFragment extends Fragment {
 
         this.streak = (TextView) this.view.findViewById(R.id.streak);
         this.grade = (TextView) this.view.findViewById(R.id.grade);
-        this.progressBar = (ProgressBar) this.view.findViewById(R.id.progress_bar);
         this.totalCompleted = 0;
 
         return view;
     }
 
-    public void makeProgressBar(CardInfo cardInfo) {
-        this.streak.setText(cardInfo.getStreakCount() + "");
+    public void makeFragment(CardInfo cardInfo) {
+        this.streak.setText(" " + cardInfo.getStreakCount());
 
         for (int i = 0; i < cardInfo.savedDates.size(); i++) {
             if (cardInfo.savedDates.get(i).getCompleted())
                 this.totalCompleted++;
         }
 
-        this.grade.setText(this.totalCompleted / cardInfo.savedDates.size() + "");
+        String gradeStr = " " +  ((cardInfo.savedDates.size() == 0) ? getString(R.string.not_available) :
+                (int) ((double) this.totalCompleted / cardInfo.savedDates.size() * 100) + "%");
 
-        this.progressBar.setProgress((int) (this.totalCompleted / cardInfo.savedDates.size()));
+        this.grade.setText(gradeStr);
     }
 
-    public void refreshProgressBar(CardInfo cardInfo) {
+    public void refresh(CardInfo cardInfo) {
         this.totalCompleted++;
 
         this.streak.setText(" " + cardInfo.getStreakCount());
-        this.grade.setText(this.totalCompleted / cardInfo.savedDates.size() + "");
-        this.progressBar.setProgress((int) (this.totalCompleted / cardInfo.savedDates.size()));
+        this.grade.setText(" " + (int) ((double) this.totalCompleted / cardInfo.savedDates.size()
+                * 100) + "%");
     }
 }

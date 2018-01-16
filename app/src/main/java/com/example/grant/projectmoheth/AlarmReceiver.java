@@ -30,10 +30,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             String json = sp.getString(MainActivity.CARD_FILE, null);
+
             System.out.println("boot completed");
-            Toast.makeText(context, "Hello", Toast.LENGTH_LONG).show();
+
             if (json != null) {
                 System.out.println("json was not null");
+
                 Type collectionType = new TypeToken<ArrayList<CardInfo>>(){}.getType();
                 ArrayList<CardInfo> list = new Gson().fromJson(json,
                         collectionType);
@@ -90,7 +92,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
                 for (int i = 0; i < cardInfo.selectedDays.size(); i++) {
-                    if (dayOfWeek == cardInfo.selectedDays.get(i)) {
+                    if (dayOfWeek == cardInfo.selectedDays.get(i) ||
+                            cardInfo.selectedDays.get(i) == 7) {
                         for (int j = 0; j < cardInfoList.size(); j++) {
                             if (cardInfoList.get(j).equals(cardInfo)) {
                                 System.out.println("This code was reached");
@@ -134,11 +137,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             // cancel the notification
             // TODO check to see whether the correct notification will be canceled
-            int index = intent.getIntExtra("com.example.grant.projectmoheth.index",
-                    0);
-            int uniqueID = MyNotification.list.get(index);
+            int uniqueID = cardInfo.uniqueID;
 
             nm.cancel(uniqueID);
+
             // if there is a NullPointerException when clicking the check button from the test
             // notification and cardInfoList.size() == 0, this is why
             for (int i = 0; i < cardInfoList.size(); i++) {

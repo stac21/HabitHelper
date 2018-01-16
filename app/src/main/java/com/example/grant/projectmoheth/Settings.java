@@ -1,12 +1,14 @@
 package com.example.grant.projectmoheth;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -25,8 +27,11 @@ public class Settings extends AppCompatActivity {
         Utils.onActivityCreateSetTheme(this);
         this.setContentView(R.layout.activity_settings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Utils.setToolbarTheme(Settings.this, toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        this.setBackArrowColor();
 
         this.sp = PreferenceManager.getDefaultSharedPreferences(this);
     }
@@ -50,6 +55,20 @@ public class Settings extends AppCompatActivity {
         this.sp.registerOnSharedPreferenceChangeListener(this.listener);
     }
 
+
+    private void setBackArrowColor() {
+        Drawable backArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+
+
+        if (Utils.getCurrentTheme(Settings.this) == Theme.LIGHT_THEME) {
+            backArrow.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+            getSupportActionBar().setHomeAsUpIndicator(backArrow);
+        } else {
+            backArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            getSupportActionBar().setHomeAsUpIndicator(backArrow);
+        }
+    }
+
     public static class SettingsFragment extends PreferenceFragment {
         private SharedPreferences sp;
         private ListPreference snoozeInterval;
@@ -61,9 +80,16 @@ public class Settings extends AppCompatActivity {
                     case "night_mode":
                         CheckBoxPreference nightMode = (CheckBoxPreference) findPreference(key);
 
-                        if (nightMode.isChecked())
-                            Utils.changeTheme(getActivity(), Theme.NIGHT_THEME);
-                        else
+
+                        if (nightMode.isChecked()) {
+                            CheckBoxPreference amoledMode = (CheckBoxPreference)
+                                    findPreference("amoled_mode");
+
+                            if (amoledMode.isChecked())
+                                Utils.changeTheme(getActivity(), Theme.BLACK_THEME);
+                            else
+                                Utils.changeTheme(getActivity(), Theme.NIGHT_THEME);
+                        } else
                             Utils.changeTheme(getActivity(), Theme.LIGHT_THEME);
                         break;
                     case "amoled_mode":

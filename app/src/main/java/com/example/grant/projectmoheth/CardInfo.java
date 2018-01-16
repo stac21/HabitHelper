@@ -1,9 +1,14 @@
 package com.example.grant.projectmoheth;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -28,9 +33,10 @@ public class CardInfo {
     protected ArrayList<Integer> selectedDays;
     // keeps a list of the dates that have been checked for this habit
     protected ArrayList<Date> savedDates;
+    protected int uniqueID;
 
     public CardInfo(String name, String description, int hour, int minute, ArrayList<Integer>
-            selectedDays) {
+            selectedDays, int uniqueID) {
         Calendar calendar = Calendar.getInstance();
         int dateCreated = calendar.get(Calendar.DAY_OF_YEAR) + calendar.get(Calendar.YEAR);
 
@@ -43,6 +49,7 @@ public class CardInfo {
         this.checked = false;
         this.selectedDays = selectedDays;
         this.savedDates = new ArrayList<Date>();
+        this.uniqueID = uniqueID;
     }
 
     public String getTruncatedName() {
@@ -180,4 +187,43 @@ public class CardInfo {
     public boolean getChecked() {
         return this.checked;
     }
+
+    /*
+    private int generateUniqueID() {
+        int id;
+        ArrayList<Integer> idList = new ArrayList<>();
+
+        do {
+            System.out.println("Looping");
+            id = (int) (Math.random() * MAX_CARDS);
+        } while (Utils.binarySearch(idList, id) != -1);
+
+        idList.add(uniqueID);
+
+        this.saveIDList(idList);
+
+        return id;
+    }
+
+    public ArrayList<Integer> loadIDList() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.context);
+        String json = sp.getString(ID_FILE, null);
+
+        Type collectionType = new TypeToken<ArrayList<Integer>>(){}.getType();
+        ArrayList<Integer> idList = new Gson().fromJson(json, collectionType);
+
+        return (idList != null) ? idList : new ArrayList<Integer>();
+    }
+
+    public void saveIDList(ArrayList<Integer> idList) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        String json = new Gson().toJson(idList);
+
+        editor.putString(ID_FILE, json);
+
+        editor.apply();
+    }
+    */
 }

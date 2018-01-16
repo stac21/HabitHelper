@@ -2,7 +2,6 @@ package com.example.grant.projectmoheth;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -19,7 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.Gravity;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
@@ -46,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
     public static CardAdapter cardAdapter;
     private RecyclerView recyclerView;
     private Resources r;
-    public static final String CARD_FILE = "com.example.grant.projectmoheth.hello";
+    public static final String CARD_FILE = "com.example.grant.projectmoheth.cardFile";
+    public static final String ID_FILE = "com.example.grant.projectmoheth.idFile";
+    private static final int MAX_CARDS = 1000;
     public static final int ALARM_REQUEST_CODE = 2;
     private static int selectedHour;
     private static int selectedMinute;
@@ -60,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Utils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Utils.setToolbarTheme(MainActivity.this, toolbar);
         setSupportActionBar(toolbar);
 
         this.theme = Utils.getCurrentTheme(this);
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         final String[] days = r.getStringArray(R.array.day_spinner_array);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        this.cardAdapter = new CardAdapter(this.loadList());
+        this.cardAdapter = new CardAdapter(this.loadCardInfoList());
 
         this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -352,7 +355,8 @@ public class MainActivity extends AppCompatActivity {
 
         public void addCard(String name, String description, int hour, int minute,
                             ArrayList<Integer> selectedDay) {
-            this.cardInfoList.add(new CardInfo(name, description, hour, minute, selectedDay));
+            this.cardInfoList.add(new CardInfo(name, description, hour, minute, selectedDay,
+                    generateUniqueID()));
 
             // save the list here
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -370,8 +374,8 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("com.example.grant.projectmoheth.alarmCardInfo",
                     new Gson().toJson(this.cardInfoList.get(this.cardInfoList.size() - 1)));
             i.setAction("com.example.grant.projectmoheth.notification");
-            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, i,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this,
+                    ALARM_REQUEST_CODE, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -384,16 +388,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void removeCard() {
-            this.cardInfoList.remove(position);
+            ArrayList<Integer> idList = loadIDList();
 
-            cardAdapter.checkList();
+            idList.remove(Utils.binarySearch(idList, this.cardInfoList.get(position).uniqueID));
+
+            saveIDList(idList);
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             SharedPreferences.Editor editor = sp.edit();
 
-            String json = new Gson().toJson(this.cardInfoList);
+            this.cardInfoList.remove(position);
 
-            editor.putString(CARD_FILE, json);
+            cardAdapter.checkList();
+
+            String cardInfoListJson = new Gson().toJson(this.cardInfoList);
+
+            editor.putString(CARD_FILE, cardInfoListJson);
 
             editor.apply();
         }
@@ -461,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<CardInfo> loadList() {
+    public ArrayList<CardInfo> loadCardInfoList() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         String json = sp.getString(CARD_FILE, null);
 
@@ -469,6 +479,42 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<CardInfo> cardInfoList = new Gson().fromJson(json, collectionType);
 
         return cardInfoList;
+    }
+
+    private ArrayList<Integer> loadIDList() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        String json = sp.getString(ID_FILE, null);
+
+        Type collectionType = new TypeToken<ArrayList<Integer>>(){}.getType();
+        ArrayList<Integer> idList = new Gson().fromJson(json, collectionType);
+
+        return (idList != null) ? idList : new ArrayList<Integer>();
+    }
+
+    private void saveIDList(ArrayList<Integer> idList) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = sp.edit();
+
+        String json = new Gson().toJson(idList);
+
+        editor.putString(ID_FILE, json);
+
+        editor.apply();
+    }
+
+    private int generateUniqueID() {
+        int id;
+        ArrayList<Integer> idList = this.loadIDList();
+
+        do {
+            id = (int) (Math.random() * MAX_CARDS);
+        } while (Utils.binarySearch(idList, id) != -1);
+
+        idList.add(id);
+
+        this.saveIDList(idList);
+
+        return id;
     }
 
     @Override
@@ -480,6 +526,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+
+
         if (this.selected) {
             MenuItem ti = menu.findItem(R.id.trash_item);
             ti.setVisible(true);
@@ -521,6 +569,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private static int num = 1;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -537,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
 
             CardInfo test = new CardInfo(r.getString(R.string.test), "Description",
                     calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE),
-                    new ArrayList<Integer>());
+                    new ArrayList<Integer>(), num++);
 
             new MyNotification(MainActivity.this, test);
         } else if (id == R.id.edit_item) {

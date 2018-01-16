@@ -75,7 +75,7 @@ public class MonthFragment extends Fragment {
             for (int i = 7; i < end; i++) {
                 TextView tv = new TextView(view.getContext());
                 tv.setText(day + "");
-                tv.setTextColor(Color.DKGRAY);
+                tv.setTextColor(Color.BLACK);
 
                 // TODO make this comment not suck draw a background on the day
                 for (int j = 0; j < savedDates.size(); j++) {
