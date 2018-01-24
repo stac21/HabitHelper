@@ -17,6 +17,10 @@ public class MonthFragment extends Fragment {
     private View view;
     private GridLayout gl;
 
+    private static final int SUCCESSFUL_DAY_TEXT_COLOR = Color.CYAN;
+    private static final int FAILED_DAY_TEXT_COLOR = Color.RED;
+    private static final int OTHER_MONTH_TEXT_COLOR = Color.DKGRAY;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
@@ -32,7 +36,7 @@ public class MonthFragment extends Fragment {
         TextView monthFragmentHeader = (TextView) this.view.findViewById(
                 R.id.month_fragment_header);
 
-        ArrayList<CardInfo.Date> savedDates = cardInfo.savedDates;
+        ArrayList<Date> savedDates = cardInfo.savedDates;
         ArrayList<Integer> selectedDays = cardInfo.selectedDays;
 
         this.month = currentTime.get(Calendar.MONTH);
@@ -69,29 +73,31 @@ public class MonthFragment extends Fragment {
 
             day = (month == Calendar.JANUARY) ? this.getDaysInMonth(Calendar.DECEMBER) -
                     (dayOfWeek - 2) : this.getDaysInMonth(month - 1) - (dayOfWeek - 2);
+            int lastMonth = (month == Calendar.JANUARY) ? Calendar.DECEMBER : month - 1;
+            int year = (month == Calendar.JANUARY) ? this.year - 1 : this.year;
 
             int end = 7 + (dayOfWeek - 1);
 
             for (int i = 7; i < end; i++) {
                 TextView tv = new TextView(view.getContext());
                 tv.setText(day + "");
-                tv.setTextColor(Color.BLACK);
+                tv.setTextColor(OTHER_MONTH_TEXT_COLOR);
 
                 // TODO make this comment not suck draw a background on the day
                 for (int j = 0; j < savedDates.size(); j++) {
-                    if (savedDates.get(j).isSameDate(month - 1, day, this.year))
-                        tv.setBackgroundColor(Color.CYAN);
+                    if (savedDates.get(j).isSameDate(lastMonth, day, year))
+                        tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
                     else {
                         for (int k = 0; k < selectedDays.size(); k++) {
                             if (tempDayOfWeek - 1 == selectedDays.get(k))
-                                tv.setBackgroundColor(Color.RED);
+                                tv.setTextColor(FAILED_DAY_TEXT_COLOR);
                         }
                     }
                 }
 
                 day++;
                 tempDayOfWeek = (tempDayOfWeek == Calendar.SUNDAY) ? Calendar.MONDAY :
-                        tempDayOfWeek++;
+                        ++tempDayOfWeek;
 
                 gl.addView(tv, i);
             }
@@ -105,34 +111,66 @@ public class MonthFragment extends Fragment {
         for (int i = 7 + (dayOfWeek - 1); i < end; i++) {
             TextView tv = new TextView(view.getContext());
             tv.setText(day + "");
+            Calendar calendar = Calendar.getInstance();
+            int dayOfYear = this.getDayOfYear(day, month);
 
-            // TODO make this comment not suck. draw a background on the day
-            for (int j = 0; j < savedDates.size(); j++) {
-                if (savedDates.get(j).isSameDate(month - 1, day, this.year))
-                    tv.setBackgroundColor(Color.CYAN);
-                else {
-                    for (int k = 0; k < selectedDays.size(); k++) {
-                        if (tempDayOfWeek - 1 == selectedDays.get(k))
-                            tv.setBackgroundColor(Color.RED);
+            boolean afterOrOnDateCreatedOrEdited = cardInfo.dateCreatedOrEdited <= dayOfYear +
+                    this.year;
+            boolean beforeOrOnToday = calendar.get(Calendar.DAY_OF_YEAR) >= dayOfYear;
+
+            // draw backgrounds on the successful and failed days
+            if (cardInfo.containsDayOfWeek(tempDayOfWeek - 1) && afterOrOnDateCreatedOrEdited &&
+                    beforeOrOnToday) {
+                boolean success = false;
+
+                for (int j = 0; j < savedDates.size() && !success; j++) {
+                    if (savedDates.get(j).isSameDate(month, day, this.year)) {
+                        tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
+                        success = true;
                     }
+                }
+
+                if (!success && !beforeOrOnToday) {
+                    tv.setTextColor(FAILED_DAY_TEXT_COLOR);
                 }
             }
 
             day++;
-            tempDayOfWeek = (tempDayOfWeek == Calendar.SUNDAY) ? Calendar.MONDAY :
-                    tempDayOfWeek++;
+            tempDayOfWeek = (tempDayOfWeek == Calendar.SATURDAY) ? Calendar.SUNDAY :
+                    ++tempDayOfWeek;
 
             gl.addView(tv, i);
         }
 
+        /*
+        populate the part of the calendar filled with next month's days if the last day of this
+        month is not a saturday
+         */
         currentTime.set(Calendar.DAY_OF_MONTH, this.getDaysInMonth(month));
 
         if (currentTime.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             day = 1;
 
-            for (int j = end; j % 6 == 0; j++) {
+            for (int j = end; j % 6 != 0; j++) {
                 TextView tv = new TextView(view.getContext());
                 tv.setText(day + "");
+                tv.setTextColor(OTHER_MONTH_TEXT_COLOR);
+
+                int nextMonth = (month == Calendar.DECEMBER) ? Calendar.JANUARY : month + 1;
+                int year = (month == Calendar.DECEMBER) ? this.year + 1 : this.year;
+
+                for (int n = 0; n < savedDates.size(); n++) {
+                    if (savedDates.get(n).isSameDate(nextMonth, day, year)) {
+                        tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
+                    } else {
+                        for (int k = 0; k < selectedDays.size(); k++) {
+                            if (tempDayOfWeek - 1 == selectedDays.get(k)) {
+                                tv.setTextColor(FAILED_DAY_TEXT_COLOR);
+                            }
+                        }
+                    }
+                }
+
                 day++;
 
                 gl.addView(tv, j);
@@ -144,6 +182,18 @@ public class MonthFragment extends Fragment {
         this.gl.removeAllViewsInLayout();
 
         this.makeCalendar(cardInfo);
+    }
+
+    private int getDayOfYear(int day, int month) {
+        int total = 0;
+
+        for (int i = 0; i < month; i++) {
+            total += this.getDaysInMonth(i);
+        }
+
+        total += day;
+
+        return total;
     }
 
     private byte getDaysInMonth(int month) {

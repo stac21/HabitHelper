@@ -10,11 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Calendar;
 
 public class HabitActivity extends AppCompatActivity {
     @Override
@@ -52,15 +54,22 @@ public class HabitActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // refresh month and consistency fragments if the habit was not checked previously
-                if (!MainActivity.cardAdapter.getCard(MainActivity.position).getChecked()) {
-                    MainActivity.cardAdapter.getCard(MainActivity.position).setChecked(
-                            HabitActivity.this, true);
+                CardInfo newCardInfo = MainActivity.cardAdapter.getCard(MainActivity.position);
+                int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
 
-                    monthFragment.refreshCalendar(cardInfo);
-                    consistencyFragment.refresh(cardInfo);
+                System.out.println("dayOfWeek = " + dayOfWeek);
+
+                System.out.println("line 60: containsDayOfWeek = " + newCardInfo.containsDayOfWeek(dayOfWeek));
+
+                if (!newCardInfo.getChecked() && newCardInfo.containsDayOfWeek(dayOfWeek)) {
+                    newCardInfo.setChecked(HabitActivity.this, true);
+
+                    monthFragment.refreshCalendar(newCardInfo);
+                    consistencyFragment.refresh(newCardInfo);
+                } else if (newCardInfo.getChecked()) {
+                    newCardInfo.setChecked(HabitActivity.this, true);
                 } else {
-                    MainActivity.cardAdapter.getCard(MainActivity.position).setChecked(
-                            HabitActivity.this, true);
+                    Toast.makeText(HabitActivity.this, "Clicked", Toast.LENGTH_LONG).show();
                 }
 
                 SharedPreferences sp =

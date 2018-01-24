@@ -62,7 +62,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                         calendar.set(Calendar.HOUR_OF_DAY, cardInfo.hour);
                         calendar.set(Calendar.MINUTE, cardInfo.minute);
 
-
                         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                                 calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
                     }
@@ -88,8 +87,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             if ((cardInfo.dateCreatedOrEdited != calendar.get(Calendar.DAY_OF_YEAR) +
                     calendar.get(Calendar.YEAR) || calendar.get(Calendar.HOUR_OF_DAY) >=
                     cardInfo.hour && calendar.get(Calendar.MINUTE) >= cardInfo.minute)) {
-                System.out.println("Got past this condition");
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                System.out.println("Got past the first condition");
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
 
                 for (int i = 0; i < cardInfo.selectedDays.size(); i++) {
                     if (dayOfWeek == cardInfo.selectedDays.get(i) ||

@@ -390,6 +390,14 @@ public class MainActivity extends AppCompatActivity {
         public void removeCard() {
             ArrayList<Integer> idList = loadIDList();
 
+            System.out.println("Position = " + position);
+
+            System.out.println("UniqueID = " + this.cardInfoList.get(position).uniqueID);
+
+            for (int i = 0; i < idList.size(); i++) {
+                System.out.println(idList.get(i));
+            }
+
             idList.remove(Utils.binarySearch(idList, this.cardInfoList.get(position).uniqueID));
 
             saveIDList(idList);
@@ -511,6 +519,9 @@ public class MainActivity extends AppCompatActivity {
         } while (Utils.binarySearch(idList, id) != -1);
 
         idList.add(id);
+
+        // the array must be sorted so that binarySearch works on it
+        Utils.mergeSort(idList, 0, idList.size() - 1);
 
         this.saveIDList(idList);
 

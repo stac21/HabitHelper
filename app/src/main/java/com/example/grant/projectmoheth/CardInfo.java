@@ -21,6 +21,7 @@ public class CardInfo {
     protected String description;
     protected int hour;
     protected int minute;
+    // in the form of Calendar.get(Calendar.DAY_OF_YEAR) + Calendar.get(Calendar.YEAR);
     protected int dateCreatedOrEdited;
     private int streakCount;
     private boolean checked;
@@ -61,7 +62,7 @@ public class CardInfo {
 
     public String getSelectedDayName(Context context) {
         if (this.selectedDays.size() > 1)
-            Utils.insertionSort(this.selectedDays);
+            Utils.mergeSort(this.selectedDays, 0, this.selectedDays.size() - 1);
 
         String str = new String();
 
@@ -120,6 +121,10 @@ public class CardInfo {
     }
 
     public void setChecked(Context context, boolean check) {
+        int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+
+        System.out.println(this.containsDayOfWeek(dayOfWeek));
+
         if (check && this.checked)
             Toast.makeText(context, context.getString(R.string.already_checked), Toast.LENGTH_SHORT).
                     show();
@@ -138,46 +143,14 @@ public class CardInfo {
         this.savedDates.add(new Date(completed));
     }
 
-    public class Date {
-        private boolean completed;
-        private int month, dayOfMonth, year;
-
-        public Date(boolean completed) {
-            Calendar calendar = Calendar.getInstance();
-
-            this.completed = completed;
-            this.month = calendar.get(Calendar.MONTH);
-            this.dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-            this.year = calendar.get(Calendar.YEAR);
+    public boolean containsDayOfWeek(int dayOfWeek) {
+        for (int i = 0; i < this.selectedDays.size(); i++) {
+            if (this.selectedDays.get(i) == dayOfWeek) {
+                return true;
+            }
         }
 
-        public Date(int month, int dayOfMonth, int year) {
-            this.month = month;
-            this.dayOfMonth = dayOfMonth;
-            this.year = year;
-        }
-
-        public boolean isSameDate(int month, int dayOfMonth, int year) {
-            return (this.month == month && this.dayOfMonth == dayOfMonth && this.year == year);
-        }
-
-        public boolean getCompleted() {
-            return this.completed;
-        }
-
-        public int getMonth() {
-            return this.month;
-        }
-
-        public int getDayOfMonth() {
-            return this.dayOfMonth;
-        }
-
-        public int getYear() {
-            return this.year;
-        }
-
-
+        return false;
     }
 
     public int getStreakCount() {
@@ -187,43 +160,4 @@ public class CardInfo {
     public boolean getChecked() {
         return this.checked;
     }
-
-    /*
-    private int generateUniqueID() {
-        int id;
-        ArrayList<Integer> idList = new ArrayList<>();
-
-        do {
-            System.out.println("Looping");
-            id = (int) (Math.random() * MAX_CARDS);
-        } while (Utils.binarySearch(idList, id) != -1);
-
-        idList.add(uniqueID);
-
-        this.saveIDList(idList);
-
-        return id;
-    }
-
-    public ArrayList<Integer> loadIDList() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.context);
-        String json = sp.getString(ID_FILE, null);
-
-        Type collectionType = new TypeToken<ArrayList<Integer>>(){}.getType();
-        ArrayList<Integer> idList = new Gson().fromJson(json, collectionType);
-
-        return (idList != null) ? idList : new ArrayList<Integer>();
-    }
-
-    public void saveIDList(ArrayList<Integer> idList) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.context);
-        SharedPreferences.Editor editor = sp.edit();
-
-        String json = new Gson().toJson(idList);
-
-        editor.putString(ID_FILE, json);
-
-        editor.apply();
-    }
-    */
 }

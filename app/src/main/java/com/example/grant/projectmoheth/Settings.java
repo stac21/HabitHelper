@@ -59,7 +59,6 @@ public class Settings extends AppCompatActivity {
     private void setBackArrowColor() {
         Drawable backArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 
-
         if (Utils.getCurrentTheme(Settings.this) == Theme.LIGHT_THEME) {
             backArrow.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
             getSupportActionBar().setHomeAsUpIndicator(backArrow);
@@ -100,6 +99,8 @@ public class Settings extends AppCompatActivity {
                         else
                             Utils.changeTheme(getActivity(), Theme.NIGHT_THEME);
                         break;
+                    case "snooze_interval":
+                        snoozeInterval.setSummary(snoozeInterval.getValue());
                 }
             }
         };

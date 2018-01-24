@@ -97,10 +97,6 @@ public class Utils {
         }
     }
 
-    /*
-     using insertionSort because high school prevented me from getting much farther in my study of
-     sorting algorithms, definitely NOT because I think it is good.
-      */
     public static <T extends Comparable<T>> void insertionSort(ArrayList<T> list) {
         if (list.size() > 1) {
             for (int i = 0; i < list.size(); i++) {
@@ -127,12 +123,14 @@ public class Utils {
             return -1;
         } else if (list.get(min).compareTo(val) > 0 || list.get(max).compareTo(val) < 0) {
             return -1;
+        } else if (list.size() == 1) {
+            return 0;
         }
 
         int i = (max + min) / 2;
 
         while (min <= max) {
-            if (list.get(i) == val) {
+            if (list.get(i).compareTo(val) == 0) {
                 return i;
             } else if (list.get(i).compareTo(val) < 0) {
                 min = i + 1;
@@ -144,5 +142,58 @@ public class Utils {
         }
 
         return -1;
+    }
+
+    public static <T extends Comparable<T>> void mergeSort(ArrayList<T> list, int p, int r) {
+        // if subarray's size > 1
+        if (p < r) {
+            int q = (p + r) / 2;
+
+            mergeSort(list, p, q);
+            mergeSort(list, q + 1, r);
+            merge(list, p, q, r);
+        }
+    }
+
+    private static <T extends Comparable<T>> void merge(ArrayList<T> list, int p, int q, int r) {
+        int lowSize = q - p + 1;
+        int highSize = r - q;
+        ArrayList<T> lowHalf = new ArrayList<T>();
+        ArrayList<T> highHalf = new ArrayList<T>();
+        int i = 0, j = 0, k = p;
+
+        // copy list[p...q] and list[q + 1...r]
+        for (int n = 0; k <= q; n++, k++) {
+            lowHalf.add(n, list.get(k));
+        }
+        for (int n = 0; k <= r; n++, k++) {
+            highHalf.add(n, list.get(k));
+        }
+
+        k = p;
+
+        while (i < lowSize && j < highSize) {
+            T lowVal = lowHalf.get(i);
+            T highVal = highHalf.get(j);
+
+            if (lowVal.compareTo(highVal) < 0) {
+                list.set(k++, lowVal);
+                i++;
+            } else {
+                list.set(k++, highVal);
+                j++;
+            }
+        }
+
+		/*
+		 * copy the remaining elements of whichever array has
+		 * elements left to be copied
+		 */
+        while (i < lowSize) {
+            list.set(k++, lowHalf.get(i++));
+        }
+        while (j < highSize) {
+            list.set(k++, highHalf.get(j++));
+        }
     }
 }
