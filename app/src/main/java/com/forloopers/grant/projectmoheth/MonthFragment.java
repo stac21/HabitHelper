@@ -1,4 +1,4 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
 import android.app.Fragment;
 import android.graphics.Color;
@@ -82,16 +82,28 @@ public class MonthFragment extends Fragment {
                 TextView tv = new TextView(view.getContext());
                 tv.setText(day + "");
                 tv.setTextColor(OTHER_MONTH_TEXT_COLOR);
+                Calendar calendar = Calendar.getInstance();
 
-                // TODO make this comment not suck draw a background on the day
-                for (int j = 0; j < savedDates.size(); j++) {
-                    if (savedDates.get(j).isSameDate(lastMonth, day, year))
-                        tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
-                    else {
-                        for (int k = 0; k < selectedDays.size(); k++) {
-                            if (tempDayOfWeek - 1 == selectedDays.get(k))
-                                tv.setTextColor(FAILED_DAY_TEXT_COLOR);
+                int dayOfYear = this.getDayOfYear(day, lastMonth);
+
+                boolean afterOrOnDateCreatedOrEdited = cardInfo.dateCreatedOrEdited <= dayOfYear +
+                        year;
+                boolean beforeOrOnToday = calendar.get(Calendar.DAY_OF_YEAR) >= dayOfYear;
+
+                // draw backgrounds on the successful and failed days
+                if (cardInfo.containsDayOfWeek(tempDayOfWeek - 1) && afterOrOnDateCreatedOrEdited &&
+                        beforeOrOnToday) {
+                    boolean success = false;
+
+                    for (int j = 0; j < savedDates.size() && !success; j++) {
+                        if (savedDates.get(j).isSameDate(lastMonth, day, year)) {
+                            tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
+                            success = true;
                         }
+                    }
+
+                    if (!success && !beforeOrOnToday) {
+                        tv.setTextColor(FAILED_DAY_TEXT_COLOR);
                     }
                 }
 
@@ -130,7 +142,7 @@ public class MonthFragment extends Fragment {
                     }
                 }
 
-                if (!success && !beforeOrOnToday) {
+                if (!success) {
                     tv.setTextColor(FAILED_DAY_TEXT_COLOR);
                 }
             }
@@ -151,29 +163,40 @@ public class MonthFragment extends Fragment {
         if (currentTime.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             day = 1;
 
-            for (int j = end; j % 6 != 0; j++) {
+            for (int i = end; i % 6 != 0; i++) {
                 TextView tv = new TextView(view.getContext());
                 tv.setText(day + "");
                 tv.setTextColor(OTHER_MONTH_TEXT_COLOR);
+                Calendar calendar = Calendar.getInstance();
 
                 int nextMonth = (month == Calendar.DECEMBER) ? Calendar.JANUARY : month + 1;
                 int year = (month == Calendar.DECEMBER) ? this.year + 1 : this.year;
+                int dayOfYear = this.getDayOfYear(day, nextMonth);
 
-                for (int n = 0; n < savedDates.size(); n++) {
-                    if (savedDates.get(n).isSameDate(nextMonth, day, year)) {
-                        tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
-                    } else {
-                        for (int k = 0; k < selectedDays.size(); k++) {
-                            if (tempDayOfWeek - 1 == selectedDays.get(k)) {
-                                tv.setTextColor(FAILED_DAY_TEXT_COLOR);
-                            }
+                boolean afterOrOnDateCreatedOrEdited = cardInfo.dateCreatedOrEdited <= dayOfYear +
+                        year;
+                boolean beforeOrOnToday = calendar.get(Calendar.DAY_OF_YEAR) >= dayOfYear;
+
+                // draw backgrounds on the successful and failed days
+                if (cardInfo.containsDayOfWeek(tempDayOfWeek - 1) && afterOrOnDateCreatedOrEdited &&
+                        beforeOrOnToday) {
+                    boolean success = false;
+
+                    for (int j = 0; j < savedDates.size() && !success; j++) {
+                        if (savedDates.get(j).isSameDate(nextMonth, day, year)) {
+                            tv.setTextColor(SUCCESSFUL_DAY_TEXT_COLOR);
+                            success = true;
                         }
+                    }
+
+                    if (!success && !beforeOrOnToday) {
+                        tv.setTextColor(FAILED_DAY_TEXT_COLOR);
                     }
                 }
 
                 day++;
 
-                gl.addView(tv, j);
+                gl.addView(tv, i);
             }
         }
     }

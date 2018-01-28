@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.grant.projectmoheth.Settings"
+    tools:context="com.forloopers.grant.projectmoheth.Settings"
     tools:showIn="@layout/activity_settings">
 
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.example.grant.projectmoheth.Settings$SettingsFragment"
+        android:name="com.forloopers.grant.projectmoheth.Settings$SettingsFragment"
         android:id="@+id/fragment"
         android:layout_gravity="center" />
 </FrameLayout>

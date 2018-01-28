@@ -1,7 +1,8 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -30,7 +31,9 @@ public class HabitActivity extends AppCompatActivity {
         Type collectionType = new TypeToken<CardInfo>(){}.getType();
         final CardInfo cardInfo = new Gson().fromJson(json, collectionType);
 
-        setTitle(cardInfo.name);
+        this.setTitle(cardInfo.name);
+        int titleTextColor = (Utils.getCurrentTheme(this) == Theme.LIGHT_THEME) ?
+                Color.BLACK : Color.WHITE;
 
         TextView descriptionTV = (TextView) findViewById(R.id.descriptionTV);
         descriptionTV.setText(cardInfo.description);
@@ -45,9 +48,10 @@ public class HabitActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        CollapsingToolbarLayout toolBarLayout = (CollapsingToolbarLayout)
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)
                 findViewById(R.id.toolbar_layout);
-        toolBarLayout.setTitle(getTitle());
+        toolbarLayout.setTitle(getTitle());
+        toolbarLayout.setExpandedTitleColor(titleTextColor);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -55,23 +59,28 @@ public class HabitActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // refresh month and consistency fragments if the habit was not checked previously
                 CardInfo newCardInfo = MainActivity.cardAdapter.getCard(MainActivity.position);
-                int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+                Calendar calendar = Calendar.getInstance();
+                int dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) ?
+                        Calendar.SATURDAY - 1 : calendar.get(Calendar.DAY_OF_WEEK) - 1;
 
                 System.out.println("dayOfWeek = " + dayOfWeek);
 
                 System.out.println("line 60: containsDayOfWeek = " + newCardInfo.containsDayOfWeek(dayOfWeek));
 
                 if (!newCardInfo.getChecked() && newCardInfo.containsDayOfWeek(dayOfWeek)) {
-                    newCardInfo.setChecked(HabitActivity.this, true);
+                    //newCardInfo.setChecked(HabitActivity.this, true);
+                    newCardInfo.setChecked(true);
+                    Toast.makeText(HabitActivity.this,
+                            HabitActivity.this.getString(R.string.checked),
+                            Toast.LENGTH_SHORT).show();
 
                     monthFragment.refreshCalendar(newCardInfo);
                     consistencyFragment.refresh(newCardInfo);
-                } else if (newCardInfo.getChecked()) {
-                    newCardInfo.setChecked(HabitActivity.this, true);
                 } else {
-                    Toast.makeText(HabitActivity.this, "Clicked", Toast.LENGTH_LONG).show();
+                    Toast.makeText(HabitActivity.this,
+                            HabitActivity.this.getString(R.string.already_checked),
+                            Toast.LENGTH_SHORT).show();
                 }
-
                 SharedPreferences sp =
                         PreferenceManager.getDefaultSharedPreferences(HabitActivity.this);
                 SharedPreferences.Editor editor = sp.edit();

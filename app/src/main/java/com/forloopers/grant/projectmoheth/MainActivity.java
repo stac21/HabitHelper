@@ -1,8 +1,6 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         final String[] days = r.getStringArray(R.array.day_spinner_array);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        this.cardAdapter = new CardAdapter(this.loadCardInfoList());
+        this.cardAdapter = new CardAdapter(this.loadCardInfoList(MainActivity.this));
 
         this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -355,40 +353,19 @@ public class MainActivity extends AppCompatActivity {
 
         public void addCard(String name, String description, int hour, int minute,
                             ArrayList<Integer> selectedDay) {
-            this.cardInfoList.add(new CardInfo(name, description, hour, minute, selectedDay,
-                    generateUniqueID()));
+            CardInfo cardInfo = new CardInfo(name, description, hour, minute, selectedDay,
+                    generateUniqueID());
 
-            // save the list here
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            SharedPreferences.Editor editor = sp.edit();
+            this.cardInfoList.add(cardInfo);
 
-            // converts the CardInfo list into a JSON String
-            String json = new Gson().toJson(this.cardInfoList);
-
-            editor.putString(CARD_FILE, json);
-
-            editor.apply();
+            saveCardInfoList(MainActivity.this, cardInfoList);
 
             // TODO add the broadcast to each habit
-            Intent i = new Intent(MainActivity.this, AlarmReceiver.class);
-            i.putExtra("com.example.grant.projectmoheth.alarmCardInfo",
-                    new Gson().toJson(this.cardInfoList.get(this.cardInfoList.size() - 1)));
-            i.setAction("com.example.grant.projectmoheth.notification");
-            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this,
-                    ALARM_REQUEST_CODE, i, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minute);
-
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, pi);
+            Utils.registerAlarm(MainActivity.this, cardInfo);
         }
 
         public void removeCard() {
-            ArrayList<Integer> idList = loadIDList();
+            ArrayList<Integer> idList = loadIDList(MainActivity.this);
 
             System.out.println("Position = " + position);
 
@@ -400,20 +377,13 @@ public class MainActivity extends AppCompatActivity {
 
             idList.remove(Utils.binarySearch(idList, this.cardInfoList.get(position).uniqueID));
 
-            saveIDList(idList);
-
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            SharedPreferences.Editor editor = sp.edit();
+            saveIDList(MainActivity.this, idList);
 
             this.cardInfoList.remove(position);
 
             cardAdapter.checkList();
 
-            String cardInfoListJson = new Gson().toJson(this.cardInfoList);
-
-            editor.putString(CARD_FILE, cardInfoListJson);
-
-            editor.apply();
+            saveCardInfoList(MainActivity.this, this.cardInfoList);
         }
 
         public void editCard(String name, String description, int hour, int minute,
@@ -424,34 +394,14 @@ public class MainActivity extends AppCompatActivity {
             this.cardInfoList.get(position).description = description;
             this.cardInfoList.get(position).hour = hour;
             this.cardInfoList.get(position).minute = minute;
-            this.cardInfoList.get(position).setChecked(MainActivity.this, false);
+            this.cardInfoList.get(position).setChecked(false);
             this.cardInfoList.get(position).selectedDays = selectedDays;
             this.cardInfoList.get(position).dateCreatedOrEdited = calendar.get(Calendar.DAY_OF_YEAR)
                 + calendar.get(Calendar.YEAR);
 
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            SharedPreferences.Editor editor = sp.edit();
+            saveCardInfoList(MainActivity.this, this.cardInfoList);
 
-            String json = new Gson().toJson(this.cardInfoList);
-
-            editor.putString(CARD_FILE, json);
-
-            editor.apply();
-
-            Intent i = new Intent(MainActivity.this, AlarmReceiver.class);
-            i.putExtra("com.example.grant.projectmoheth.alarmCardInfo", new Gson().toJson(
-                    this.cardInfoList.get(position)));
-            i.setAction("com.example.grant.projectmoheth.notification");
-            PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, i,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minute);
-
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, pi);
+            Utils.registerAlarm(MainActivity.this, this.cardInfoList.get(position));
 
             finish();
             overridePendingTransition(0, 0);
@@ -479,8 +429,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<CardInfo> loadCardInfoList() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+    public static ArrayList<CardInfo> loadCardInfoList(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String json = sp.getString(CARD_FILE, null);
 
         Type collectionType = new TypeToken<ArrayList<CardInfo>>(){}.getType();
@@ -489,8 +439,19 @@ public class MainActivity extends AppCompatActivity {
         return cardInfoList;
     }
 
-    private ArrayList<Integer> loadIDList() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+    public static void saveCardInfoList(Context context, ArrayList<CardInfo> cardInfoList) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        String json = new Gson().toJson(cardInfoList);
+
+        editor.putString(CARD_FILE, json);
+
+        editor.apply();
+    }
+
+    public static ArrayList<Integer> loadIDList(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String json = sp.getString(ID_FILE, null);
 
         Type collectionType = new TypeToken<ArrayList<Integer>>(){}.getType();
@@ -499,8 +460,8 @@ public class MainActivity extends AppCompatActivity {
         return (idList != null) ? idList : new ArrayList<Integer>();
     }
 
-    private void saveIDList(ArrayList<Integer> idList) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+    private static void saveIDList(Context context, ArrayList<Integer> idList) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
         String json = new Gson().toJson(idList);
@@ -512,7 +473,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int generateUniqueID() {
         int id;
-        ArrayList<Integer> idList = this.loadIDList();
+        ArrayList<Integer> idList = loadIDList(MainActivity.this);
 
         do {
             id = (int) (Math.random() * MAX_CARDS);
@@ -523,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
         // the array must be sorted so that binarySearch works on it
         Utils.mergeSort(idList, 0, idList.size() - 1);
 
-        this.saveIDList(idList);
+        saveIDList(MainActivity.this, idList);
 
         return id;
     }

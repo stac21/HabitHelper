@@ -1,4 +1,4 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -113,8 +113,10 @@ public class Settings extends AppCompatActivity {
 
             this.sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+            /*
             this.snoozeInterval = (ListPreference) findPreference("snooze_interval");
             this.snoozeInterval.setSummary(this.snoozeInterval.getValue());
+            */
         }
 
         @Override

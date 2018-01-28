@@ -17,8 +17,9 @@
         <item name="android:textColorPrimary">@android:color/black</item>
 
         <item name="colorControlNormal">@android:color/black</item>
-        <!--<item name="navigationIcon">@drawable/ic_back_black_24dp</item>-->
         <item name="android:actionOverflowButtonStyle">@style/MyCustomOverflowStyle</item>
+        <item name="android:statusBarColor">@android:color/tertiary_text_light</item>
+        <item name="android:colorPrimary">@android:color/white</item>
     </style>
 
     <style name="MyCustomOverflowStyle" parent="android:Widget.Material.ActionButton.Overflow">

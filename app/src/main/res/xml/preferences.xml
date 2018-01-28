@@ -25,6 +25,7 @@
             android:showSilent="true"
             android:showDefault="true"/>
         <!--TODO: figure out how to set the defaultValue tag to an item in the string array-->
+        <!--
         <ListPreference
             android:key="snooze_interval"
             android:title="@string/snooze_interval"
@@ -32,6 +33,6 @@
             android:entries="@array/snooze_interval_array"
             android:entryValues="@array/snooze_interval_array"
             android:defaultValue=""/>
-
+            -->
     </PreferenceCategory>
 </PreferenceScreen>

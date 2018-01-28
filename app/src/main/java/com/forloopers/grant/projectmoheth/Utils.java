@@ -1,6 +1,8 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,13 +11,13 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Utils {
     private static Theme currentTheme;
@@ -95,6 +97,25 @@ public class Utils {
 
             return theme;
         }
+    }
+
+    public static void registerAlarm(Context context, CardInfo cardInfo) {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        Intent i = new Intent(context, AlarmReceiver.class);
+        i.putExtra("com.example.grant.projectmoheth.alarmCardInfo",
+                new Gson().toJson(cardInfo));
+        i.setAction("com.example.grant.projectmoheth.notification");
+
+        PendingIntent pi = PendingIntent.getBroadcast(context, cardInfo.uniqueID, i,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, cardInfo.hour);
+        calendar.set(Calendar.MINUTE, cardInfo.minute);
+
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pi);
     }
 
     public static <T extends Comparable<T>> void insertionSort(ArrayList<T> list) {

@@ -1,4 +1,4 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
 import org.junit.Test;
 

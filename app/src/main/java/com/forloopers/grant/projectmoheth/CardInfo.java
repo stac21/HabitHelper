@@ -1,14 +1,7 @@
-package com.example.grant.projectmoheth;
+package com.forloopers.grant.projectmoheth;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -34,6 +27,10 @@ public class CardInfo {
     protected ArrayList<Integer> selectedDays;
     // keeps a list of the dates that have been checked for this habit
     protected ArrayList<Date> savedDates;
+    /*
+    uniqueID for MyNotification. Will also serve as the alarm request code for Notification's
+    PendingIntent
+     */
     protected int uniqueID;
 
     public CardInfo(String name, String description, int hour, int minute, ArrayList<Integer>
@@ -120,6 +117,7 @@ public class CardInfo {
             this.dateCreatedOrEdited == cardInfo.dateCreatedOrEdited);
     }
 
+    /*
     public void setChecked(Context context, boolean check) {
         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
@@ -136,6 +134,17 @@ public class CardInfo {
             saveCurrentDate(true);
         } else {
             this.checked = false;
+        }
+    }
+    */
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+
+        if (checked) {
+            this.streakCount++;
+
+            saveCurrentDate(checked);
         }
     }
 
